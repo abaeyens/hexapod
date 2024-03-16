@@ -18,11 +18,18 @@
       </geometry>
       <material name="frame" />
     </visual>
+    <inertial>
+      <mass value="0.600" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0021" iyy="0.0046" izz="0.0065"
+               ixy="0" ixz="0" iyz="0" />
+    </inertial>
   </link>
 
   <!-- legs -->
   <xacro:macro name="leg" params="index reflect xyz rpy">
     <!-- leg_X: fixed to base_link -->
+    <!-- TODO for Gazebo add inertial if whole link gets ignored -->
     <link name="leg_${index}" />
     <joint name="base_link__leg_${index}" type="fixed"> 
       <parent link="base_link" />
@@ -38,6 +45,12 @@
           <box size="0.05 ${leg_a_length} 0.03" />
         </geometry>
       </visual>
+      <inertial>
+        <mass value="0.100" />
+        <origin xyz="0 ${leg_a_length/2*reflect} 0" />
+        <inertia ixx="0.000028" iyy="0.000028" izz="0.000028"
+                 ixy="0"        ixz="0"        iyz="0" />
+      </inertial>
     </link>
     <joint name="leg_${index}_base__leg_${index}a" type="revolute">
       <axis xyz="0 0 1" />
@@ -51,6 +64,7 @@
       </xacro:unless>
       <parent link="leg_${index}" />
       <child link="leg_${index}a" />
+      <dynamics friction="${joint_friction}" />
     </joint>
     <!-- leg_Xb: upper segment -->
     <link name="leg_${index}b">
@@ -60,6 +74,12 @@
           <box size="0.03 ${leg_b_length} 0.03" />
         </geometry>
       </visual>
+      <inertial>
+        <mass value="0.100" />
+        <origin xyz="0 ${leg_b_length/2*reflect} 0" />
+        <inertia ixx="0.000195" iyy="0.000010" izz="0.000195"
+                 ixy="0"        ixz="0"        iyz="0" />
+      </inertial>
     </link>
     <joint name="leg_${index}a__leg_${index}b" type="revolute">
       <axis xyz="1 0 0" />
@@ -74,6 +94,7 @@
       <parent link="leg_${index}a" />
       <child link="leg_${index}b" />
       <origin xyz="0 ${leg_a_length*reflect} 0" />
+      <dynamics friction="${joint_friction}" />
     </joint>
     <!-- leg_Xc: lower segment (with foot) -->
     <link name="leg_${index}c">
@@ -95,7 +116,14 @@
         <geometry>
           <sphere radius="0.03" />
         </geometry>
+        <contact_coefficients mu="0.7" />
       </collision>
+      <inertial>
+        <mass value="0.100" />
+        <origin xyz="0 ${leg_c_length/2*reflect} 0" />
+        <inertia ixx="0.000195" iyy="0.000010" izz="0.000195"
+                 ixy="0"        ixz="0"        iyz="0" />
+      </inertial>
     </link>
     <joint name="leg_${index}b__leg_${index}c" type="revolute">
       <axis xyz="1 0 0" />
@@ -110,6 +138,7 @@
       <parent link="leg_${index}b" />
       <child link="leg_${index}c" />
       <origin xyz="0 ${leg_b_length*reflect} 0" />
+      <dynamics friction="${joint_friction}" />
     </joint>
   </xacro:macro>
   <!-- Instantiate the six legs -->
