@@ -22,7 +22,15 @@
 
   <!-- legs -->
   <xacro:macro name="leg" params="index reflect xyz rpy">
-    <!-- leg_aX: upper segment (shoulder) -->
+    <!-- leg_X: fixed to base_link -->
+    <link name="leg_${index}" />
+    <joint name="base_link__leg_${index}" type="fixed"> 
+      <parent link="base_link" />
+      <child link="leg_${index}" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+
+    <!-- leg_Xa: shoulder  -->
     <link name="leg_${index}a">
       <visual>
         <origin xyz="0 ${leg_a_length/2*reflect} 0" />
@@ -31,12 +39,20 @@
         </geometry>
       </visual>
     </link>
-    <joint name="base_link__leg_${index}a" type="fixed">
-      <parent link="base_link" />
+    <joint name="leg_${index}_base__leg_${index}a" type="revolute">
+      <axis xyz="0 0 1" />
+      <xacro:if value="${reflect == 1}">
+        <limit lower="${joint_a_limit_lower}" upper="${joint_a_limit_upper}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:if>
+      <xacro:unless value="${reflect == 1}">
+        <limit lower="${-joint_a_limit_upper}" upper="${-joint_a_limit_lower}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:unless>
+      <parent link="leg_${index}" />
       <child link="leg_${index}a" />
-      <origin xyz="${xyz}" rpy="${rpy}" />
     </joint>
-    <!-- leg_bX: center segment -->
+    <!-- leg_Xb: upper segment -->
     <link name="leg_${index}b">
       <visual>
         <origin xyz="0 ${leg_b_length/2*reflect} 0" />
@@ -45,12 +61,21 @@
         </geometry>
       </visual>
     </link>
-    <joint name="base_link__leg_${index}b" type="fixed">
+    <joint name="leg_${index}a__leg_${index}b" type="revolute">
+      <axis xyz="1 0 0" />
+      <xacro:if value="${reflect == 1}">
+        <limit lower="${joint_b_limit_lower}" upper="${joint_b_limit_upper}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:if>
+      <xacro:unless value="${reflect == 1}">
+        <limit lower="${-joint_b_limit_upper}" upper="${-joint_b_limit_lower}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:unless>
       <parent link="leg_${index}a" />
       <child link="leg_${index}b" />
       <origin xyz="0 ${leg_a_length*reflect} 0" />
     </joint>
-    <!-- leg_cX: lower segment (with foot) -->
+    <!-- leg_Xc: lower segment (with foot) -->
     <link name="leg_${index}c">
       <visual>
         <origin xyz="0 ${leg_c_length/2*reflect} 0" />
@@ -72,16 +97,25 @@
         </geometry>
       </collision>
     </link>
-    <joint name="base_link__leg_${index}c" type="fixed">
+    <joint name="leg_${index}b__leg_${index}c" type="revolute">
+      <axis xyz="1 0 0" />
+      <xacro:if value="${reflect == 1}">
+        <limit lower="${joint_c_limit_lower}" upper="${joint_c_limit_upper}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:if>
+      <xacro:unless value="${reflect == 1}">
+        <limit lower="${-joint_c_limit_upper}" upper="${-joint_c_limit_lower}"
+            effort="${joint_effort}" velocity="${joint_velocity}" />
+      </xacro:unless>
       <parent link="leg_${index}b" />
       <child link="leg_${index}c" />
       <origin xyz="0 ${leg_b_length*reflect} 0" />
     </joint>
   </xacro:macro>
   <!-- Instantiate the six legs -->
-  <xacro:leg index="0" reflect=" 1" xyz=" 0.15  0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
-  <xacro:leg index="1" reflect=" 1" xyz=" 0.00  0.15 0.0" rpy="0 0 0" />
-  <xacro:leg index="2" reflect=" 1" xyz="-0.15  0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
+  <xacro:leg index="0" reflect="1"  xyz=" 0.15  0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
+  <xacro:leg index="1" reflect="1"  xyz=" 0.00  0.15 0.0" rpy="0 0 0" />
+  <xacro:leg index="2" reflect="1"  xyz="-0.15  0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
   <xacro:leg index="3" reflect="-1" xyz=" 0.15 -0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
   <xacro:leg index="4" reflect="-1" xyz=" 0.00 -0.15 0.0" rpy="0 0 0" />
   <xacro:leg index="5" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
