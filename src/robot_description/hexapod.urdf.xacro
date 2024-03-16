@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<robot name="hexapod" xmlns:xacro="http://wiki.ros.org/xacro">
+  <xacro:include filename="$(find robot_description)/properties.urdf.xacro" />
+
+  <!-- base_footprint -->
+  <link name="base_footprint" />
+  <joint name="base_footprint_joint" type="fixed"> 
+    <parent link="base_footprint" />
+    <child link="base_link" />
+  </joint>
+
+  <!-- base_link -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size="0.300 0.200 0.050" />
+      </geometry>
+      <material name="frame" />
+    </visual>
+  </link>
+
+  <!-- legs -->
+  <xacro:macro name="leg" params="index reflect xyz rpy">
+    <!-- leg_aX: upper segment (shoulder) -->
+    <link name="leg_${index}a">
+      <visual>
+        <origin xyz="0 ${leg_a_length/2*reflect} 0" />
+        <geometry>
+          <box size="0.05 ${leg_a_length} 0.03" />
+        </geometry>
+      </visual>
+    </link>
+    <joint name="base_link__leg_${index}a" type="fixed">
+      <parent link="base_link" />
+      <child link="leg_${index}a" />
+      <origin xyz="${xyz}" rpy="${rpy}" />
+    </joint>
+    <!-- leg_bX: center segment -->
+    <link name="leg_${index}b">
+      <visual>
+        <origin xyz="0 ${leg_b_length/2*reflect} 0" />
+        <geometry>
+          <box size="0.03 ${leg_b_length} 0.03" />
+        </geometry>
+      </visual>
+    </link>
+    <joint name="base_link__leg_${index}b" type="fixed">
+      <parent link="leg_${index}a" />
+      <child link="leg_${index}b" />
+      <origin xyz="0 ${leg_a_length*reflect} 0" />
+    </joint>
+    <!-- leg_cX: lower segment (with foot) -->
+    <link name="leg_${index}c">
+      <visual>
+        <origin xyz="0 ${leg_c_length/2*reflect} 0" />
+        <geometry>
+          <box size="0.03 ${leg_c_length} 0.03" />
+        </geometry>
+      </visual>
+      <visual>
+        <origin xyz="0 ${leg_c_length*reflect} 0" />
+        <geometry>
+          <sphere radius="0.03" />
+        </geometry>
+        <material name="feet" />
+      </visual>
+      <collision>
+        <origin xyz="0 ${leg_c_length*reflect} 0" />
+        <geometry>
+          <sphere radius="0.03" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="base_link__leg_${index}c" type="fixed">
+      <parent link="leg_${index}b" />
+      <child link="leg_${index}c" />
+      <origin xyz="0 ${leg_b_length*reflect} 0" />
+    </joint>
+  </xacro:macro>
+  <!-- Instantiate the six legs -->
+  <xacro:leg index="0" reflect=" 1" xyz=" 0.15  0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
+  <xacro:leg index="1" reflect=" 1" xyz=" 0.00  0.15 0.0" rpy="0 0 0" />
+  <xacro:leg index="2" reflect=" 1" xyz="-0.15  0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
+  <xacro:leg index="3" reflect="-1" xyz=" 0.15 -0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
+  <xacro:leg index="4" reflect="-1" xyz=" 0.00 -0.15 0.0" rpy="0 0 0" />
+  <xacro:leg index="5" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
+
+</robot>

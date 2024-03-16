@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot name="hexapod" xmlns:xacro="http://wiki.ros.org/xacro">
+  <!-- ********* -->
+  <!-- Materials -->
+  <!-- ********* -->
+  <material name="frame">
+    <color rgba="1.0 0.6 0.0 1" />
+  </material>
+  <material name="feet">
+    <color rgba="0.1 0.1 0.1 1" />
+  </material>
+
+  <!-- ********** -->
+  <!-- Parameters -->
+  <!-- ********** -->
+  <xacro:property name="leg_spreading_angle" value="0.5236" />
+  <xacro:property name="leg_a_length" value="0.050" />
+  <xacro:property name="leg_b_length" value="0.150" />
+  <xacro:property name="leg_c_length" value="0.150" />
+
+</robot>
