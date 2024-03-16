@@ -1,0 +1,6 @@
+install/
+build/
+log/
+.bash_history
+.vscode/
+
