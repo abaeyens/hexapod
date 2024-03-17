@@ -30,7 +30,7 @@ RUN apt update && \
 # Install other packages
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ros-iron-ros-ign-bridge \
+    ros-iron-ros-gz \
     ros-iron-rqt* \
     ros-iron-xacro \
     ros-iron-joint-state-publisher \

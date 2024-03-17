@@ -1,0 +1,24 @@
+# ros_gz_bridge parameter_bridge config
+- gz_topic_name: /clock
+  ros_topic_name: clock
+  gz_type_name: gz.msgs.Clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  direction: GZ_TO_ROS
+
+- gz_topic_name: /model/hexapod/odometry
+  ros_topic_name: odom
+  gz_type_name: gz.msgs.Odometry
+  ros_type_name: geometry_msgs/msg/Odometry
+  direction: GZ_TO_ROS
+
+- gz_topic_name: /model/hexapod/joint_state
+  ros_topic_name: joint_states
+  gz_type_name: gz.msgs.Model
+  ros_type_name: sensor_msgs/msg/JointState
+  direction: GZ_TO_ROS
+
+- gz_topic_name: /model/hexapod/imu_sensor
+  ros_topic_name: imu
+  gz_type_name: gz.msgs.IMU
+  ros_type_name: sensor_msgs/msg/Imu
+  direction: GZ_TO_ROS

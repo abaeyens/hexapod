@@ -149,4 +149,29 @@
   <xacro:leg index="4" reflect="-1" xyz=" 0.00 -0.15 0.0" rpy="0 0 0" />
   <xacro:leg index="5" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
 
+  <!-- Gazebo (simulation only) -->
+  <gazebo>
+    <plugin
+      filename="ignition-gazebo-odometry-publisher-system"
+      name="ignition::gazebo::systems::OdometryPublisher">
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <odom_topic>/model/hexapod/odometry</odom_topic>
+      <odom_frame>world</odom_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-joint-state-publisher-system"
+      name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>/model/hexapod/joint_state</topic>
+    </plugin>
+    <!-- TODO check this one -->
+    <!--
+    <plugin
+      filename="ignition-gazebo-imu-sensor-publisher-system"
+      name="ignition::gazebo::systems::ImuSensorPublisher">
+      <update_rate>50</update_rate>
+      <topic>/model/hexapod/imu</topic>
+    </plugin>
+    -->
+  </gazebo>
 </robot>

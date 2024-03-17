@@ -1,0 +1,28 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="run_on_start" default="true" />
+
+  <let name="run_on_start_args" value="-r" if="$(var run_on_start)" />
+  <let name="run_on_start_args" value="" unless="$(var run_on_start)" />
+
+  <!-- Simulator -->
+  <set_env name="IGN_GAZEBO_RESOURCE_PATH" value="$(env IGN_GAZEBO_RESOURCE_PATH ''):$(find-pkg-share robot_description)/.." />
+  <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+    <arg name="gz_args" value="$(var run_on_start_args) 'empty_world.sdf'" />
+  </include>
+
+  <!-- ROS <=> Gazebo bridge -->
+  <node pkg="ros_gz_bridge" exec="parameter_bridge" name="gazebo" output="screen">
+    <param name="config_file" value="$(find-pkg-share simulation)/config/bridge.yaml" />
+    <!-- todo: remap imu and odometry to make clear they're ground truth? -->
+  </node>
+
+  <!-- Yeet our beloved pet in the matrix -->
+  <node pkg="ros_gz_sim" exec="create" output="screen"
+    args="
+      -topic robot_description
+      -name hexapod
+      -z 0.2
+    "
+  />
+</launch>
