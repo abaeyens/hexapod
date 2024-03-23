@@ -17,9 +17,11 @@
   <xacro:property name="leg_a_length" value="0.050" />
   <xacro:property name="leg_b_length" value="0.150" />
   <xacro:property name="leg_c_length" value="0.150" />
-  <xacro:property name="joint_velocity" value="5.6" />
-  <xacro:property name="joint_effort" value="0.9" />
-  <xacro:property name="joint_friction" value="0.1" />
+  <xacro:property name="servo_velocity_limit" value="5.6" />
+  <xacro:property name="servo_effort_limit" value="0.9" />
+  <xacro:property name="servo_static_friction" value="0.3" />
+  <xacro:property name="servo_damping_friction" value="0.1" />
+  <xacro:property name="servo_p_gain" value="8.4" />
   <xacro:property name="joint_a_limit_lower" value="-0.7854" />
   <xacro:property name="joint_a_limit_upper" value="0.7854" />
   <xacro:property name="joint_b_limit_lower" value="-1.047" />

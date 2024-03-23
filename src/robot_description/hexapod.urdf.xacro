@@ -18,6 +18,11 @@
       </geometry>
       <material name="frame" />
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.300 0.200 0.050" />
+      </geometry>
+    </collision>
     <inertial>
       <mass value="0.600" />
       <origin xyz="0 0 0" />
@@ -27,6 +32,22 @@
   </link>
 
   <!-- legs -->
+  <xacro:macro name="servo" params="index joint_name">
+    <gazebo>
+      <plugin
+        filename="gz-sim-joint-position-controller-system"
+        name="gz::sim::systems::JointPositionController">
+        <joint_name>${joint_name}</joint_name>
+        <use_actuator_msg>true</use_actuator_msg>
+        <actuator_number>${index}</actuator_number>
+        <cmd_max>${servo_effort_limit}</cmd_max>
+        <cmd_min>${-servo_effort_limit}</cmd_min>
+        <p_gain>${servo_p_gain}</p_gain>
+        <i_gain>0.</i_gain>
+        <d_gain>0.</d_gain>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
   <xacro:macro name="leg" params="index reflect xyz rpy">
     <!-- leg_X: fixed to base_link -->
     <!-- TODO for Gazebo add inertial if whole link gets ignored -->
@@ -56,15 +77,15 @@
       <axis xyz="0 0 1" />
       <xacro:if value="${reflect == 1}">
         <limit lower="${joint_a_limit_lower}" upper="${joint_a_limit_upper}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:if>
       <xacro:unless value="${reflect == 1}">
         <limit lower="${-joint_a_limit_upper}" upper="${-joint_a_limit_lower}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:unless>
       <parent link="leg_${index}" />
       <child link="leg_${index}a" />
-      <dynamics friction="${joint_friction}" />
+      <dynamics friction="${servo_static_friction}" damping="${servo_damping_friction}" />
     </joint>
     <!-- leg_Xb: upper segment -->
     <link name="leg_${index}b">
@@ -85,16 +106,16 @@
       <axis xyz="1 0 0" />
       <xacro:if value="${reflect == 1}">
         <limit lower="${joint_b_limit_lower}" upper="${joint_b_limit_upper}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:if>
       <xacro:unless value="${reflect == 1}">
         <limit lower="${-joint_b_limit_upper}" upper="${-joint_b_limit_lower}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:unless>
       <parent link="leg_${index}a" />
       <child link="leg_${index}b" />
       <origin xyz="0 ${leg_a_length*reflect} 0" />
-      <dynamics friction="${joint_friction}" />
+      <dynamics friction="${servo_static_friction}" damping="${servo_damping_friction}" />
     </joint>
     <!-- leg_Xc: lower segment (with foot) -->
     <link name="leg_${index}c">
@@ -129,17 +150,20 @@
       <axis xyz="1 0 0" />
       <xacro:if value="${reflect == 1}">
         <limit lower="${joint_c_limit_lower}" upper="${joint_c_limit_upper}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:if>
       <xacro:unless value="${reflect == 1}">
         <limit lower="${-joint_c_limit_upper}" upper="${-joint_c_limit_lower}"
-            effort="${joint_effort}" velocity="${joint_velocity}" />
+            effort="${servo_effort_limit}" velocity="${servo_velocity_limit}" />
       </xacro:unless>
       <parent link="leg_${index}b" />
       <child link="leg_${index}c" />
       <origin xyz="0 ${leg_b_length*reflect} 0" />
-      <dynamics friction="${joint_friction}" />
+      <dynamics friction="${servo_static_friction}" damping="${servo_damping_friction}" />
     </joint>
+    <xacro:servo index="${index*3+0}" joint_name="leg_${index}_base__leg_${index}a" />
+    <xacro:servo index="${index*3+1}" joint_name="leg_${index}a__leg_${index}b" />
+    <xacro:servo index="${index*3+2}" joint_name="leg_${index}b__leg_${index}c" />
   </xacro:macro>
   <!-- Instantiate the six legs -->
   <xacro:leg index="0" reflect="1"  xyz=" 0.15  0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
