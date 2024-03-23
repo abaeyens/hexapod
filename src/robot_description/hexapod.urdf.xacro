@@ -149,7 +149,17 @@
   <xacro:leg index="4" reflect="-1" xyz=" 0.00 -0.15 0.0" rpy="0 0 0" />
   <xacro:leg index="5" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
 
+  <!-- Sensors -->
+  <link name="imu" />
+  <joint name="base_link__imu" type="fixed"> 
+    <parent link="base_link" />
+    <child link="imu" />
+    <!-- TODO set correct pose -->
+    <origin xyz="0 0 0.05" />
+  </joint>
+
   <!-- Gazebo (simulation only) -->
+  <!-- docs: https://github.com/gazebosim/gz-sim/tree/main/src/systems -->
   <gazebo>
     <plugin
       filename="ignition-gazebo-odometry-publisher-system"
@@ -157,21 +167,17 @@
       <odom_publish_frequency>50</odom_publish_frequency>
       <odom_topic>/model/hexapod/odometry</odom_topic>
       <odom_frame>world</odom_frame>
-      <robot_base_frame>base_footprint</robot_base_frame>
+      <robot_base_frame>base_link</robot_base_frame>
     </plugin>
     <plugin
       filename="ignition-gazebo-joint-state-publisher-system"
       name="ignition::gazebo::systems::JointStatePublisher">
       <topic>/model/hexapod/joint_state</topic>
     </plugin>
-    <!-- TODO check this one -->
-    <!--
+    <!-- TODO doesn't work, no imu topic in Gazebo gets published -->
     <plugin
-      filename="ignition-gazebo-imu-sensor-publisher-system"
-      name="ignition::gazebo::systems::ImuSensorPublisher">
-      <update_rate>50</update_rate>
-      <topic>/model/hexapod/imu</topic>
+      filename="ignition-gazebo-imu-system"
+      name="ignition::gazebo::systems::Imu">
     </plugin>
-    -->
   </gazebo>
 </robot>

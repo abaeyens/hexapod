@@ -1,4 +1,6 @@
 # ros_gz_bridge parameter_bridge config
+# todo: prefix 'odom' and 'joint_states' with 'sim'
+# to make clear they're ground truth?
 - gz_topic_name: /clock
   ros_topic_name: clock
   gz_type_name: gz.msgs.Clock
@@ -8,7 +10,7 @@
 - gz_topic_name: /model/hexapod/odometry
   ros_topic_name: odom
   gz_type_name: gz.msgs.Odometry
-  ros_type_name: geometry_msgs/msg/Odometry
+  ros_type_name: nav_msgs/msg/Odometry
   direction: GZ_TO_ROS
 
 - gz_topic_name: /model/hexapod/joint_state

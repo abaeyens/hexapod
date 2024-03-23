@@ -17,7 +17,6 @@
   <!-- ROS <=> Gazebo bridge -->
   <node pkg="ros_gz_bridge" exec="parameter_bridge" name="gazebo" output="screen">
     <param name="config_file" value="$(find-pkg-share simulation)/config/bridge.yaml" />
-    <!-- todo: remap imu and odometry to make clear they're ground truth? -->
   </node>
 
   <!-- Yeet our beloved pet in the matrix -->
