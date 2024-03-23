@@ -52,15 +52,15 @@ RUN groupadd --gid $USER_GID $USERNAME && \
 # Give sudo privileges to the non-root user if needed
 # RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME
 
-# Add terminal coloring for the new user
+# Set up .bashrc
+## Add terminal coloring for the new user
 RUN echo 'PS1="(container) ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' >> /home/${USERNAME}/.bashrc
+## Source ROS 2 setup
+RUN echo "source /opt/ros/iron/setup.bash" >> /home/$USERNAME/.bashrc
+RUN echo "source install/setup.bash" >> /home/$USERNAME/.bashrc
 
 # Switch to the non-root user
 USER $USERNAME
-
-
-# Source ROS 2 setup script
-RUN echo "source /opt/ros/iron/setup.bash" >> /home/$USERNAME/.bashrc
 
 # Set entry point
 CMD ["/bin/bash"]
