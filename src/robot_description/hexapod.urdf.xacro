@@ -162,22 +162,22 @@
   <!-- docs: https://github.com/gazebosim/gz-sim/tree/main/src/systems -->
   <gazebo>
     <plugin
-      filename="ignition-gazebo-odometry-publisher-system"
-      name="ignition::gazebo::systems::OdometryPublisher">
+      filename="gz-sim-odometry-publisher-system"
+      name="gz::sim::systems::OdometryPublisher">
       <odom_publish_frequency>50</odom_publish_frequency>
       <odom_topic>/model/hexapod/odometry</odom_topic>
       <odom_frame>world</odom_frame>
       <robot_base_frame>base_link</robot_base_frame>
     </plugin>
     <plugin
-      filename="ignition-gazebo-joint-state-publisher-system"
-      name="ignition::gazebo::systems::JointStatePublisher">
+      filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
       <topic>/model/hexapod/joint_state</topic>
     </plugin>
     <!-- TODO doesn't work, no imu topic in Gazebo gets published -->
     <plugin
-      filename="ignition-gazebo-imu-system"
-      name="ignition::gazebo::systems::Imu">
+      filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
     </plugin>
   </gazebo>
 </robot>

@@ -9,7 +9,7 @@
   <let name="run_on_start_args" value="" unless="$(var run_on_start)" />
 
   <!-- Simulator -->
-  <set_env name="IGN_GAZEBO_RESOURCE_PATH" value="$(env IGN_GAZEBO_RESOURCE_PATH ''):$(find-pkg-share robot_description)/.." />
+  <set_env name="GZ_SIM_RESOURCE_PATH" value="$(env GZ_SIM_RESOURCE_PATH ''):$(find-pkg-share robot_description)/.." />
   <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
     <arg name="gz_args" value="$(var run_headless_args) $(var run_on_start_args) 'empty_world.sdf'" />
   </include>

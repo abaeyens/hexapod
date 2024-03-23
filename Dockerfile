@@ -20,17 +20,17 @@ RUN apt update && \
     ros-dev-tools \
     ros-iron-desktop
 
-# Install Gazebo Ignition Fortress
+# Install Gazebo Harmonic
 RUN wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ignition-fortress 
+    gz-harmonic
 
 # Install other packages
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ros-iron-ros-gz \
+    ros-iron-ros-gzharmonic \
     ros-iron-rqt* \
     ros-iron-xacro \
     ros-iron-joint-state-publisher \
