@@ -32,6 +32,7 @@ RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ros-iron-ros-gzharmonic \
     ros-iron-rqt* \
+    ros-iron-plotjuggler-ros \
     ros-iron-xacro \
     ros-iron-joint-state-publisher \
     ros-iron-joint-state-publisher-gui
