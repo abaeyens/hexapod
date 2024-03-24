@@ -117,7 +117,7 @@
       <origin xyz="0 ${leg_a_length*reflect} 0" />
       <dynamics friction="${servo_static_friction}" damping="${servo_damping_friction}" />
     </joint>
-    <!-- leg_Xc: lower segment (with foot) -->
+    <!-- leg_Xc: lower segment -->
     <link name="leg_${index}c">
       <visual>
         <origin xyz="0 ${leg_c_length/2*reflect} 0" />
@@ -160,6 +160,13 @@
       <child link="leg_${index}c" />
       <origin xyz="0 ${leg_b_length*reflect} 0" />
       <dynamics friction="${servo_static_friction}" damping="${servo_damping_friction}" />
+    </joint>
+    <!-- Link in the foot ball center to easily refer to that point in KDL -->
+    <link name="foot_${index}" />
+    <joint name="leg_${index}c__foot_${index}" type="fixed">
+      <parent link="leg_${index}c" />
+      <child link="foot_${index}" />
+      <origin xyz="0 ${leg_c_length*reflect} 0" />
     </joint>
     <xacro:servo index="${index*3+0}" joint_name="leg_${index}_base__leg_${index}a" />
     <xacro:servo index="${index*3+1}" joint_name="leg_${index}a__leg_${index}b" />
