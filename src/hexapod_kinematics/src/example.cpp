@@ -11,14 +11,13 @@ public:
   : Node("example_node_kinematics_usage")
   {
   }
-  void init()
+  void run()
   {
     // Start listening to URDF, create KDL tree,
     // extract chains and construct a solver for each
     hexapod_kinematics::Kinematics kinematics(
-      shared_from_this(),
       std::vector<std::string>{"foot_0", "foot_1", "foot_2"});
-    kinematics.wait_until_initialized();
+    kinematics.spinUntilInitialized();
 
     // Run the solver once
     KDL::JntArray q_init(3);
@@ -39,7 +38,7 @@ int main(int argc, char* argv[])
 {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<ExampleNode>();
-  node->init();
+  node->run();
   rclcpp::shutdown();
   return 0;
 }
