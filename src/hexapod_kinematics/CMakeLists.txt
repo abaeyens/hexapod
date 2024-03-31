@@ -11,12 +11,14 @@ find_package(rclcpp REQUIRED)
 find_package(orocos_kdl_vendor REQUIRED)
 find_package(kdl_parser REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(urdf REQUIRED)
 
 set(dependencies
   rclcpp
   orocos_kdl_vendor
   kdl_parser
   std_msgs
+  urdf
 )
 
 #########

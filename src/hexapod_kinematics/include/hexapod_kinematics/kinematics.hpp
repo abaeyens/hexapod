@@ -2,6 +2,7 @@
 #define HEXAPOD_KINEMATICS__KINEMATICS_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "urdf_parser/urdf_parser.h"
 #include "kdl/tree.hpp"
 #include "kdl/chainiksolverpos_lma.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -21,6 +22,8 @@ public:
   int cartToJnt(
     const size_t leg_index, const KDL::JntArray& q_init,
     const KDL::Frame& T_base_goal, KDL::JntArray& q_out);
+  bool foldAndClampJointAnglesToLimits(
+    const size_t leg_index, KDL::JntArray & q);
 
 private:
   void robotDescriptionCallback(const std_msgs::msg::String& msg);
@@ -33,6 +36,7 @@ private:
   // TODO use smart pointers to handle chains and solvers?
   std::vector<KDL::Chain> chains_;
   std::vector<KDL::ChainIkSolverPos_LMA> solvers_;
+  std::vector<std::vector<urdf::JointLimits>> joint_limits_;
   bool solvers_set_ = false;
 };
 }   // namespace hexapod_kinematics

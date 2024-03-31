@@ -27,7 +27,9 @@ public:
     KDL::Frame p_in(KDL::Vector(0.16, 0.24, -0.03));
     KDL::JntArray q_out(3);
     int result = kinematics.cartToJnt(0, q_init, p_in, q_out);
+    bool clamped = kinematics.foldAndClampJointAnglesToLimits(0, q_out);
     std::cout << "solver return: " << result << std::endl;
+    std::cout << "clamped:       " << clamped << std::endl;
     std::cout << "joint angles [deg]: " << q_out(0)*180/M_PI << ", "
                                         << q_out(1)*180/M_PI << ", "
                                         << q_out(2)*180/M_PI << std::endl;

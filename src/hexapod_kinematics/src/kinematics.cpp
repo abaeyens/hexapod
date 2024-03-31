@@ -1,9 +1,12 @@
 #include "hexapod_kinematics/kinematics.hpp"
 
+#include <math.h>
+
 #include "rclcpp/qos.hpp"
 #include "kdl/chain.hpp"
 #include "kdl/frames.hpp"
 #include "kdl/jntarray.hpp"
+#include "kdl/joint.hpp"
 #include "kdl_parser/kdl_parser.hpp"
 
 namespace hexapod_kinematics
@@ -25,9 +28,9 @@ Kinematics::Kinematics(
 
 void Kinematics::robotDescriptionCallback(const std_msgs::msg::String& msg)
 {
-  std::string urdf = msg.data;
+  // Build KDL::Tree
   bool tree_was_not_empty = tree_.getNrOfSegments() > 0;
-  bool success = kdl_parser::treeFromString(urdf, tree_);
+  bool success = kdl_parser::treeFromString(msg.data, tree_);
   if (success) {
     RCLCPP_INFO(this->get_logger(),
       "IK: Constructed KDL tree from URDF with %d joints and %d segments.",
@@ -41,15 +44,10 @@ void Kinematics::robotDescriptionCallback(const std_msgs::msg::String& msg)
     RCLCPP_INFO(this->get_logger(),
       "IK: Received a new URDF, processed it and rebuilt the solvers.");
   }
-  createSolvers();
-}
-
-void Kinematics::createSolvers()
-{
+  // Extract chains from tree
+  // TODO do this in a way that doesn't involve duplicating them from the tree?
   chains_.clear();
   chains_.resize(feet_links_.size());
-  solvers_.clear();
-  solvers_.reserve(feet_links_.size());
   for (size_t i = 0; i < feet_links_.size(); i++) {
     // Extract chain of interest from tree
     bool success = tree_.getChain(base_link_, feet_links_[i], std::ref(chains_[i]));
@@ -64,6 +62,33 @@ void Kinematics::createSolvers()
         static_cast<int>(i), base_link_.c_str(), feet_links_[i].c_str());
       continue;
     }
+  }
+  // Extract joint limits
+  // not supported by KDL so we'll parse them manually
+  // first extract joint names from KDL, then look up their limits
+  // (to ensure we get the same sequence)
+  urdf::ModelInterfaceSharedPtr urdf = urdf::parseURDF(msg.data);
+  joint_limits_.clear();
+  joint_limits_.resize(chains_.size());
+  for (size_t i = 0; i < chains_.size(); i++) {
+    for (size_t j = 0; j < chains_[i].getNrOfSegments(); j++) {
+      auto joint = chains_[i].getSegment(j).getJoint();
+      if (joint.getType() != KDL::Joint::JointType::Fixed) {
+        joint_limits_[i].push_back(*(urdf->getJoint(joint.getName())->limits));
+        assert(joint_limits_[i].upper >= joint_limits_[i].lower);
+      }
+    }
+    joint_limits_[i].shrink_to_fit();
+  }
+  // With all information gathered, initialize the solvers
+  createSolvers();
+}
+
+void Kinematics::createSolvers()
+{
+  solvers_.clear();
+  solvers_.reserve(feet_links_.size());
+  for (size_t i = 0; i < feet_links_.size(); i++) {
     // Create IK solver
     solvers_.emplace_back(std::cref(chains_[i]), 1e-5, 100, 1e-15);
   }
@@ -91,5 +116,25 @@ int Kinematics::cartToJnt(
     return -1;
   }
   return solvers_[leg_index].CartToJnt(q_init, T_base_goal, q_out);
+}
+
+bool Kinematics::foldAndClampJointAnglesToLimits(
+  const size_t leg_index, KDL::JntArray & q)
+{
+  bool clamping_applied = false;
+  for (size_t i = 0; i < q.rows(); i++) {
+    urdf::JointLimits jl = joint_limits_[leg_index][i];
+    // Fold
+    while (q(i) > jl.upper) q(i) -= 2*M_PI;
+    while (q(i) < jl.lower) q(i) += 2*M_PI;
+    // Check whether clamping is required, and if so, clamp to nearest
+    if (q(i) > jl.upper) {
+      clamping_applied = true;
+      const float upper_distance = fmod(q(i) - jl.upper, 2*M_PI);
+      const float lower_distance = fmod(jl.lower - q(i), 2*M_PI);
+      q(i) = upper_distance > lower_distance ? jl.lower : jl.upper;
+    }
+  }
+  return clamping_applied;
 }
 }  // namespace hexapod_kinematics
