@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
- <tabbed_widget parent="main_window" name="Main Window">
-  <Tab tab_name="Joints" containers="1">
+ <tabbed_widget name="Main Window" parent="main_window">
+  <Tab containers="1" tab_name="Joints positions">
    <Container>
-    <DockSplitter count="2" orientation="-" sizes="0.500787;0.499213">
-     <DockSplitter count="3" orientation="|" sizes="0.333333;0.333333;0.333333">
+    <DockSplitter sizes="0.501182;0.498818" orientation="-" count="2">
+     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.017084" right="22.675885" left="0.000000" bottom="-0.000417"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="0.790913" bottom="-2.199912"/>
         <limitY/>
         <curve name="/actuators/position[0]" color="#ff0000"/>
         <curve name="/joint_states/position[0]" color="#ba3232"/>
@@ -18,8 +18,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.017084" right="22.675885" left="0.000000" bottom="-0.000417"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="0.468027" bottom="-1.876113"/>
         <limitY/>
         <curve name="/actuators/position[3]" color="#ff0000"/>
         <curve name="/joint_states/position[3]" color="#ba3232"/>
@@ -30,8 +30,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.017105" right="22.675885" left="0.000000" bottom="-0.001257"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="0.419000" bottom="-2.190846"/>
         <limitY/>
         <curve name="/actuators/position[6]" color="#ff0000"/>
         <curve name="/joint_states/position[6]" color="#ba3232"/>
@@ -42,10 +42,10 @@
        </plot>
       </DockArea>
      </DockSplitter>
-     <DockSplitter count="3" orientation="|" sizes="0.333333;0.333333;0.333333">
+     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.000417" right="22.675885" left="0.000000" bottom="-0.017084"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="2.190840" bottom="-0.419001"/>
         <limitY/>
         <curve name="/actuators/position[9]" color="#ff0000"/>
         <curve name="/joint_states/position[9]" color="#ba3232"/>
@@ -56,8 +56,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.000417" right="22.675885" left="0.000000" bottom="-0.017084"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="1.876243" bottom="-0.473371"/>
         <limitY/>
         <curve name="/actuators/position[12]" color="#ff0000"/>
         <curve name="/joint_states/position[12]" color="#ba3232"/>
@@ -68,8 +68,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot mode="TimeSeries" flip_y="false" flip_x="false" style="Lines">
-        <range top="0.215000" right="22.675885" left="0.000000" bottom="-0.415000"/>
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000000" right="5.158281" top="2.199916" bottom="-0.790913"/>
         <limitY/>
         <curve name="/actuators/position[15]" color="#ff0000"/>
         <curve name="/joint_states/position[15]" color="#ba3232"/>
@@ -80,6 +80,85 @@
        </plot>
       </DockArea>
      </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab containers="1" tab_name="Joint velocities">
+   <Container>
+    <DockSplitter sizes="0.500394;0.499606" orientation="-" count="2">
+     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="3.187662" bottom="-5.814333"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[0]" color="#ff7f0e"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[1]" color="#f14cc1"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[2]" color="#9467bd"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="5.816526" bottom="-3.277555"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[15]" color="#17becf"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[16]" color="#bcbd22"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+        <limitY/>
+        <curve name="/joint_states/velocity[17]" color="#1f77b4"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab containers="1" tab_name="Twist">
+   <Container>
+    <DockSplitter sizes="0.333596;0.332808;0.333596" orientation="-" count="3">
+     <DockArea name="...">
+      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+       <range left="0.030042" right="5.130644" top="0.362329" bottom="0.016315"/>
+       <limitY/>
+       <curve name="/odom/twist/twist/linear/x" color="#1f77b4"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+       <range left="0.030042" right="5.130644" top="0.079509" bottom="-0.079079"/>
+       <limitY/>
+       <curve name="/odom/twist/twist/linear/y" color="#d62728"/>
+      </plot>
+     </DockArea>
+     <DockArea name="...">
+      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
+       <range left="0.030042" right="5.130644" top="0.273728" bottom="-0.265050"/>
+       <limitY/>
+       <curve name="/odom/twist/twist/angular/z" color="#1ac938"/>
+      </plot>
+     </DockArea>
     </DockSplitter>
    </Container>
   </Tab>
@@ -108,7 +187,7 @@
    <max_array_size value="100"/>
    <boolean_strings_to_number value="true"/>
    <remove_suffix_from_strings value="true"/>
-   <selected_topics value="/actuators;/joint_states"/>
+   <selected_topics value="/actuators;/joint_states;/odom"/>
   </plugin>
   <plugin ID="UDP Server"/>
   <plugin ID="WebSocket Server"/>
