@@ -1,18 +1,19 @@
 # Hexapod
 
 ## Get up and running
-Do the host setup (see below) and then
 ```bash
-git clone TODO
+git clone git@github.com:abaeyens/hexapod-MPC.git
 git submodule update --init --recursive
 docker compose build --pull
 docker compose run --rm app bash
 colcon build
 source install/setup.bash
 ```
-
+To finish, do the host setup (see below) and reboot the host.
 
 ## Host setup
+For improved DDS performance, a few changes on the host side are necessary.
+From this repo's root directory:
 ```bash
 sudo ln -s ${PWD}/etc/sysctl.d/ros2-dds.conf /etc/sysctl.d/ros2-dds.conf
 ```

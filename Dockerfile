@@ -27,7 +27,7 @@ RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     gz-harmonic
 
-# Install other packages
+# Install other ROS-related packages
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ros-iron-ros-gzharmonic \
@@ -36,6 +36,11 @@ RUN apt update && \
     ros-iron-xacro \
     ros-iron-joint-state-publisher \
     ros-iron-joint-state-publisher-gui
+
+# Install other non-ROS packages
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    gdb
 
 # Install Python packages
 
