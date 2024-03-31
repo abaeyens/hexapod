@@ -176,9 +176,9 @@
   <xacro:leg index="0" reflect="1"  xyz=" 0.15  0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
   <xacro:leg index="1" reflect="1"  xyz=" 0.00  0.15 0.0" rpy="0 0 0" />
   <xacro:leg index="2" reflect="1"  xyz="-0.15  0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
-  <xacro:leg index="3" reflect="-1" xyz=" 0.15 -0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
+  <xacro:leg index="3" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
   <xacro:leg index="4" reflect="-1" xyz=" 0.00 -0.15 0.0" rpy="0 0 0" />
-  <xacro:leg index="5" reflect="-1" xyz="-0.15 -0.10 0.0" rpy="0 0 -${leg_spreading_angle}" />
+  <xacro:leg index="5" reflect="-1" xyz=" 0.15 -0.10 0.0" rpy="0 0 ${leg_spreading_angle}" />
 
   <!-- Sensors -->
   <link name="imu" />
