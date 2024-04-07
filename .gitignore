@@ -1,6 +1,7 @@
 install/
 build/
 log/
+*.ipynb_checkpoints
 .bash_history
 .vscode/
 

@@ -40,9 +40,15 @@ RUN apt update && \
 # Install other non-ROS packages
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3-pip \
     gdb
 
 # Install Python packages
+RUN pip install \
+    rockit-meco
+RUN pip install \
+    notebook \
+    jupytext
 
 # Clear apt cache
 RUN rm -rf /var/lib/apt/lists/*
