@@ -22,15 +22,16 @@
 import rockit as rk
 import casadi as cs
 import numpy as np
-# %matplotlib inline
+# %matplotlib widget
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 
 
 # Parameters
 amax = cs.vertcat(0.5, 1.0)
 vmax = cs.vertcat(0.3, 0.15)
 xmax = 0.05
-vf = 0.05
+vf = 0.047
 hmin = 0.02
 hmax = 0.04
 
@@ -54,9 +55,6 @@ def create_stage(ocp, idx, t0, T, N=10):
         case 0:
             # Maximize ground contact duration
             stage.add_objective(-stage.T**2)
-        case 3:
-            # Minor intensive to keep the foot high
-            stage.add_objective(-stage.integral(x[1])**2 * 1e0)
 
     # Path constraints
     # General
@@ -87,6 +85,7 @@ def create_stage(ocp, idx, t0, T, N=10):
             stage.subject_to(hmin <= (x[1] <= hmax))
             stage.subject_to(stage.at_t0(x[0]) == -xmax)
             stage.subject_to(stage.at_t0(v[0]) >= 0)
+            stage.subject_to(a[1] <= 0)
         case 4:
             stage.subject_to(stage.at_t0(x[0]) == xmax)
             stage.subject_to(v[0] <= 0)
@@ -124,12 +123,12 @@ ocp = rk.Ocp()
 # Stage 4: until most forwards point
 # Stage 5: going down, already at correct backward velocity
 stages = []
-stages.append(create_stage(ocp, 0, rk.FreeTime(0), rk.FreeTime(1), N=3))
-stages.append(create_stage(ocp, 1, rk.FreeTime(1), rk.FreeTime(2)))
-stages.append(create_stage(ocp, 2, rk.FreeTime(2), rk.FreeTime(3), N=5))
-stages.append(create_stage(ocp, 3, rk.FreeTime(3), rk.FreeTime(4), N=50))
-stages.append(create_stage(ocp, 4, rk.FreeTime(4), rk.FreeTime(5), N=5))
-stages.append(create_stage(ocp, 5, rk.FreeTime(5), rk.FreeTime(6)))
+stages.append(create_stage(ocp, 0, rk.FreeTime(0), rk.FreeTime(1), N=1))
+stages.append(create_stage(ocp, 1, rk.FreeTime(1), rk.FreeTime(2), N=10))
+stages.append(create_stage(ocp, 2, rk.FreeTime(2), rk.FreeTime(3), N=3))
+stages.append(create_stage(ocp, 3, rk.FreeTime(3), rk.FreeTime(4), N=30))
+stages.append(create_stage(ocp, 4, rk.FreeTime(4), rk.FreeTime(5), N=3))
+stages.append(create_stage(ocp, 5, rk.FreeTime(5), rk.FreeTime(6), N=10))
 # Feet must be in contact half of the time
 ocp.subject_to(stages[0][0].T == sum(s[0].T for s in stages[1:]))
 for sa, sb in zip(stages[:-1], stages[1:]): stitch_stages(ocp, sa[0], sb[0])
@@ -166,19 +165,43 @@ sa = np.vstack([so[1] for so in sols])
 
 print(f'duration: {tsx[-1]:.2f} s')
 
-fig, axs = plt.subplots(3, 1, sharex=True)
+fig, axs = plt.subplots(3, 1, sharex=True, constrained_layout=True)
 axs[0].plot(tsx, sx[:, 0], '-*', label='x')
-axs[0].plot(tsx, sx[:, 1], '-', label='z')
+axs[0].hlines(-xmax, 0, tsx[-1], linestyles=':', color='tab:blue', label='-xmax')
+axs[0].hlines(xmax, 0, tsx[-1], linestyles=':', color='tab:blue', label='xmax')
+axs[0].plot(tsx, sx[:, 1], '-*', label='z')
+axs[0].hlines(hmin, 0, tsx[-1], linestyles=':', color='tab:orange', label='hmin')
+axs[0].hlines(hmax, 0, tsx[-1], linestyles=':', color='tab:orange', label='hmax')
 axs[0].set_ylabel('p [m]')
-axs[1].plot(tsx, sv[:, 0], '-', label='x')
-axs[1].plot(tsx, sv[:, 1], '-', label='z')
+axs[0].legend(loc='lower left')
+axs[1].plot(tsx, sv[:, 0], '-*', label='x')
+axs[1].hlines(-float(vmax[0]), 0, tsx[-1], linestyles=':', color='tab:blue', label='-vmax x')
+axs[1].hlines(float(vmax[0]), 0, tsx[-1], linestyles=':', color='tab:blue', label='vmax x')
+axs[1].plot(tsx, sv[:, 1], '-*', label='z')
+axs[1].hlines(-float(vmax[1]), 0, tsx[-1], linestyles=':', color='tab:orange', label='-vmax z')
+axs[1].hlines(float(vmax[1]), 0, tsx[-1], linestyles=':', color='tab:orange', label='vmax z')
 axs[1].set_ylabel('v [m/s]')
-axs[2].plot(tsx, sa[:, 0], '-', label='x')
-axs[2].plot(tsx, sa[:, 1], '-', label='z')
+axs[2].step(tsx, sa[:, 0], '-', where='post', label='x')
+axs[2].hlines(-float(amax[0]), 0, tsx[-1], linestyles=':', color='tab:blue', label='-amax x')
+axs[2].hlines(float(amax[0]), 0, tsx[-1], linestyles=':', color='tab:blue', label='amax x')
+axs[2].step(tsx, sa[:, 1], '-', where='post', label='z')
+axs[2].hlines(-float(amax[1]), 0, tsx[-1], linestyles=':', color='tab:orange', label='-amax z')
+axs[2].hlines(float(amax[1]), 0, tsx[-1], linestyles=':', color='tab:orange', label='amax z')
 axs[2].set_ylabel('a [m/s²]')
+axs[-1].set_xlabel('time [s]')
 
 # %%
-fig, ax = plt.subplots(1, 1, sharex=True)
-ax.plot(sx[:, 0], sx[:, 1], '-*')
+fig, ax = plt.subplots(1, 1, sharex=True, constrained_layout=True)
+cmap = 'turbo'
+points = np.array([sx[:,0], sx[:,1]]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+norm = plt.Normalize(0, np.linalg.norm(vmax))
+lc = LineCollection(segments, cmap=cmap, norm=norm)
+lc.set_array(np.linalg.norm(sv, axis=1))
+line = ax.add_collection(lc)
+sc = ax.scatter(sx[:, 0], sx[:, 1], c=np.linalg.norm(sv, axis=1), norm=norm, cmap=cmap, marker='*')
+ax.set_aspect('equal')
 ax.set_xlabel('px [m]')
 ax.set_ylabel('py [m]')
+cbar = plt.colorbar(line, ax=ax)
+cbar.set_label('velocity [m/s]')

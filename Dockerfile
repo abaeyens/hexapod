@@ -48,6 +48,7 @@ RUN pip install \
     rockit-meco
 RUN pip install \
     notebook \
+    ipympl \
     jupytext
 
 # Clear apt cache
