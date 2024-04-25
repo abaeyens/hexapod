@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <math.h>
 
 #include "rclcpp/rclcpp.hpp"
@@ -9,29 +12,16 @@
 
 using namespace std::chrono_literals;
 
-struct Point {
+struct TrajectoryPose {
   double t;
   double x;
   double y;
   double z;
 };
-static const std::vector<Point> leg_trajectory = {
-  {0,  0, 0, 0},
-  {2, -1, 0, 0},
-  {3, -1, 1, 1},
-  {5,  1, 1, 1},
-  {6,  1, 0, 0},
-  {8,  0, 0, 0},
-};
-
-static const double period = 3.0;
-static const double amplitude_x = 0.05;
-static const double amplitude_y = 0;
-static const double amplitude_z = 0.04;
-static const double offset_z = -0.08;
 
 void interpolate_trajectory(
-  const std::vector<Point> & trajectory, const double time, Point & p) {
+  const std::vector<TrajectoryPose> & trajectory, const double time, TrajectoryPose & p) {
+  // TODO update this to use faster bisection method
   if (trajectory.size() == 1) p = trajectory[0];
   for (size_t i = 1; i < trajectory.size(); i++)  {
     if (trajectory[i].t > time) {
@@ -40,9 +30,13 @@ void interpolate_trajectory(
       p.x = trajectory[i-1].x * (1-alpha) + trajectory[i].x * alpha;
       p.y = trajectory[i-1].y * (1-alpha) + trajectory[i].y * alpha;
       p.z = trajectory[i-1].z * (1-alpha) + trajectory[i].z * alpha;
-      break;
+      return;
     }
   }
+  p.t = trajectory.back().t;
+  p.x = trajectory.back().x;
+  p.y = trajectory.back().y;
+  p.z = trajectory.back().z;
 }
 
 
@@ -52,10 +46,17 @@ public:
   WalkForward()
   : Node("walk_forward")
   {
+    // Load trajectory from given filepath
+    this->declare_parameter("trajectory_filepath", "");
+    std::string trajectory_filepath =
+        this->get_parameter("trajectory_filepath").as_string();
+    load_trajectory_from_file(trajectory_filepath);
+
+    // Callbacks
     publisher_ = this->create_publisher<actuator_msgs::msg::Actuators>(
       "actuators", 1);
     timer_ = this->create_wall_timer(
-      20ms, std::bind(&WalkForward::timerCallback, this));
+      5ms, std::bind(&WalkForward::timerCallback, this));
     last_start_ = this->now();
 
     // Initialize joint angles (solver initialization)
@@ -77,29 +78,24 @@ private:
   void timerCallback()
   {
     // Get relative time of where we are in the foot motion
+    const double trajectory_duration = leg_trajectory_.back().t;
+    const double period = trajectory_duration * 1.0;
     rclcpp::Time now = this->now();
-    if (now - last_start_ > rclcpp::Duration(period, 0))
-      last_start_ += rclcpp::Duration(period, 0);
-    const double trajectory_duration = leg_trajectory.back().t;
-    const double rt_even = (now - last_start_).seconds() / period * trajectory_duration;
+    if (now - last_start_ > rclcpp::Duration::from_seconds(period))
+      last_start_ += rclcpp::Duration::from_seconds(period);
+    const double rt_even = (now - last_start_).seconds() * trajectory_duration / period;
     const double rt_odd = fmod(rt_even + trajectory_duration/2, trajectory_duration);
     // Read out the poses for even and odd feet
-    Point p_even, p_odd;
-    interpolate_trajectory(leg_trajectory, rt_even, p_even);
-    interpolate_trajectory(leg_trajectory, rt_odd, p_odd);
-    p_even.x *= amplitude_x;
-    p_even.y *= amplitude_y;
-    p_even.z = p_even.z * amplitude_z + offset_z;
-    p_odd.x *= amplitude_x;
-    p_odd.y *= amplitude_y;
-    p_odd.z = p_odd.z * amplitude_z + offset_z;
+    TrajectoryPose p_even, p_odd;
+    interpolate_trajectory(leg_trajectory_, rt_even, p_even);
+    interpolate_trajectory(leg_trajectory_, rt_odd, p_odd);
     // Transform to feet points
     std::vector<KDL::Vector> foot_positions(nb_legs_);
     for (int i = 0; i < nb_legs_; i++) {
-      Point p = i % 2 ? p_odd : p_even;
+      TrajectoryPose p = i % 2 ? p_odd : p_even;
       foot_positions[i].x(p.x + (i == 0 || i == 5 ? 0.18 : 0.00) + (i == 2 || i == 3 ? -0.18 : 0.00));
       foot_positions[i].y((p.y + (i == 1 || i == 4 ? 0.27 : 0.20)) * (i < 3 ? 1 : -1));
-      foot_positions[i].z(p.z);
+      foot_positions[i].z(p.z -= 0.08);
     }
     // Get joint angles (inverse kinematics)
     for (int i = 0; i < nb_legs_; i++) {
@@ -120,11 +116,38 @@ private:
     }
     publisher_->publish(msg);
   }
+
+  void load_trajectory_from_file(const std::string & filename) {
+    if (filename.empty())
+     throw std::runtime_error("Given filename empty.");
+    std::ifstream file(filename);
+    if (!file.is_open())
+      throw std::runtime_error("Could not open file " + filename + ".");
+    if (!file.good())
+      throw std::runtime_error("File is not good: " + filename + ".");
+    leg_trajectory_ = {};
+    std::string line;
+    while (std::getline(file, line)) {
+      if (line.empty() || line[0] == '#') continue;
+      std::istringstream iss(line);
+      TrajectoryPose pose;
+      char comma;
+      if (iss >> pose.t >> comma >> pose.x >> comma >> pose.y >> comma >> pose.z) {
+        leg_trajectory_.push_back(pose);
+      } else {
+        std::cerr << "Error parsing line: " << line << std::endl;
+      }
+    }
+    // Let trajectory start exactly at t = 0
+    for (TrajectoryPose & p: leg_trajectory_) p.t -= leg_trajectory_[0].t;
+  }
+
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<actuator_msgs::msg::Actuators>::SharedPtr publisher_;
   std::shared_ptr<hexapod_kinematics::Kinematics> kinematics_;
   rclcpp::Time last_start_;
   std::vector<KDL::JntArray> joint_angles_;
+  std::vector<TrajectoryPose> leg_trajectory_;
 
   static const int nb_legs_ = 6;
   static const int nb_joints_per_leg_ = 3;

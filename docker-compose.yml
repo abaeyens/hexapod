@@ -14,6 +14,8 @@ services:
       - /var/log/journal:/var/log/journal
       - ${XAUTHORITY}:/home/user/.Xauthority:ro
     environment:
+      # Application
+      - DATA_PATH=${PWD}/data
       # Graphics
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
