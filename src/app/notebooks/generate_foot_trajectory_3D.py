@@ -31,16 +31,14 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 # Parameters
-amax = cs.vertcat(2.5, 10.0, 5.0)  # total guess this
-#amax = cs.vertcat(0.5, 0.5, 1.0)
-#vmax = cs.vertcat(0.3, 0.15, 0.15)
+amax = cs.vertcat(1.5, 6.0, 3.0)  # total guess this
 vmax = cs.vertcat(0.67, 0.34, 0.34)
 xmax = 0.05
-ymax = 0.04
-#vf = 0.047
-vf = 0.10
+ymax = 0.03
+vf = 0.07
 hmin = 0.02
 hmax = 0.04
+additional_contact_duration = 0.050
 
 # not fully supported yet, please keep at zero
 walking_axis = 0
@@ -153,7 +151,7 @@ ocp = rk.Ocp()
 # Stage 1: going upwards, but still backwards at same speed
 # Stage 2: until most backwards point
 # Stage 3: move forwards sufficiently high => don't care
-# Stage 4: until most forwards point
+# Stage 4: go back from most forwards point
 # Stage 5: going down, already at correct backward velocity
 stages = []
 stages.append(create_stage(ocp, 0, rk.FreeTime(0), rk.FreeTime(2), N=1))
@@ -162,8 +160,9 @@ stages.append(create_stage(ocp, 2, rk.FreeTime(4), rk.FreeTime(6), N=3))
 stages.append(create_stage(ocp, 3, rk.FreeTime(6), rk.FreeTime(8), N=30))
 stages.append(create_stage(ocp, 4, rk.FreeTime(8), rk.FreeTime(10), N=3))
 stages.append(create_stage(ocp, 5, rk.FreeTime(10), rk.FreeTime(12), N=10))
-# Feet must be in contact half of the time
-ocp.subject_to(stages[0][0].T == sum(s[0].T for s in stages[1:]))
+# Feet must be in contact half of the time + a little bit more
+ocp.subject_to(stages[0][0].T == \
+               sum(s[0].T for s in stages[1:]) + additional_contact_duration*2)
 for sa, sb in zip(stages[:-1], stages[1:]): stitch_stages(ocp, sa[0], sb[0])
 stitch_stages(ocp, stages[-1][0], stages[0][0], stitch_time=False)
 
@@ -259,3 +258,33 @@ ax.set_ylabel('py [m]')
 ax.set_zlabel('pz [m]')
 cbar = plt.colorbar(cm.ScalarMappable(norm=cnorm, cmap=cmap), ax=ax)
 cbar.set_label('velocity [m/s]')
+
+# %% [markdown]
+# ## Write the trajectory to a file
+# For use in the C++ code.
+
+# %%
+import csv
+
+def export_trajectory_to_csv(tsp, sp, filename):
+    """Trajectory => CSV file"""
+    # Put in one large array
+    trajectory = np.hstack([tsp[:,np.newaxis], sp])
+    # Remove double timestamps
+    # TODO shouldn't occur
+    num_acc = 1e-9
+    i = 1
+    while i < trajectory.shape[0] and trajectory[i,0] > trajectory[i-1,0] - num_acc:
+        if abs(trajectory[i,0] - trajectory[i-1,0]) < num_acc:
+            trajectory[i:-1,:] = trajectory[i+1:,:]
+            trajectory[-1,:] = 0
+        i += 1
+    trajectory = trajectory[:1+np.where(trajectory[1:,0]==0)[0][0],:]
+    # Save to CSV file
+    np.savetxt(
+        filename, trajectory, '%+6.4f',
+        delimiter=', ', newline='\n',
+        header='t, px, py, pz')
+    
+
+export_trajectory_to_csv(tsp, sp, 'trajectory.csv')
