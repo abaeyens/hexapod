@@ -95,7 +95,7 @@ private:
       TrajectoryPose p = i % 2 ? p_odd : p_even;
       foot_positions[i].x(p.x + (i == 0 || i == 5 ? 0.18 : 0.00) + (i == 2 || i == 3 ? -0.18 : 0.00));
       foot_positions[i].y((p.y + (i == 1 || i == 4 ? 0.27 : 0.20)) * (i < 3 ? 1 : -1));
-      foot_positions[i].z(p.z -= 0.08);
+      foot_positions[i].z(p.z -= 0.10);
     }
     // Get joint angles (inverse kinematics)
     for (int i = 0; i < nb_legs_; i++) {
