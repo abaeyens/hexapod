@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="app" exec="follow_velocity_rectangle" name="follow_velocity_rectangle" output="screen">
+    <param name="use_sim_time" value="true" />
+  </node>
+</launch>

@@ -8,16 +8,20 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(actuator_msgs REQUIRED)
 find_package(orocos_kdl_vendor REQUIRED)
 find_package(hexapod_kinematics REQUIRED)
+find_package(hexapod_msgs REQUIRED)
 
 set(dependencies
   rclcpp
   std_msgs
+  geometry_msgs
   actuator_msgs
   orocos_kdl_vendor
   hexapod_kinematics
+  hexapod_msgs
 )
 
 #########
@@ -31,11 +35,20 @@ target_include_directories(walk_forward PRIVATE
   $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(walk_forward ${dependencies})
 
+add_executable(follow_velocity_rectangle
+  src/follow_velocity_rectangle.cpp
+)
+target_include_directories(follow_velocity_rectangle PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+ament_target_dependencies(follow_velocity_rectangle ${dependencies})
+
 ###########
 # install #
 ###########
 install(TARGETS
   walk_forward
+  follow_velocity_rectangle
   DESTINATION lib/${PROJECT_NAME}
 )
 

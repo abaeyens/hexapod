@@ -1,25 +1,20 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>app</name>
+  <name>hexapod_msgs</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Interfaces (msg, srv, action) for the Hexapod project</description>
   <maintainer email="mail@arnebaeyens.com">Arne Baeyens</maintainer>
   <author email="mail@arnebaeyens.com">Arne Baeyens</author>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
 
-  <depend>rclpy</depend>
-  <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>actuator_msgs</depend>
-  <depend>orocos_kdl_vendor</depend>
-  <depend>hexapod_kinematics</depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
