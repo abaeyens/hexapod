@@ -346,7 +346,7 @@ private:
 
   // Parameters
   static constexpr double cmd_vel_timeout_ = 0.3;
-  static constexpr double max_velocity_ratio_ = 0.25;
+  static constexpr double max_velocity_ratio_ = 0.50;
 
   // Hardware parameters
   // TODO derive those from properties.urdf.xacro
@@ -357,7 +357,7 @@ private:
   static constexpr double pzsync_ = -0.090;
   static constexpr double vxmax_ = 0.67;
   static constexpr double vymax_ = 0.34;
-  static constexpr double vzmax_ = 0.34 * 1/2;
+  static constexpr double vzmax_ = 0.34 * 2/3;
   // TODO support other values than 6
   static const int nb_legs_ = 6;
   static const int nb_joints_per_leg_ = 3;

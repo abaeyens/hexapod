@@ -25,7 +25,7 @@
   <xacro:property name="joint_a_limit_lower" value="-0.7854" />
   <xacro:property name="joint_a_limit_upper" value="0.7854" />
   <xacro:property name="joint_b_limit_lower" value="-1.047" />
-  <xacro:property name="joint_b_limit_upper" value="0.7854" />
+  <xacro:property name="joint_b_limit_upper" value="1.047" />
   <xacro:property name="joint_c_limit_lower" value="-2.618" />
   <xacro:property name="joint_c_limit_upper" value="0" />
 
