@@ -55,7 +55,7 @@ public:
     // Callbacks
     publisher_ = this->create_publisher<actuator_msgs::msg::Actuators>(
       "actuators", 1);
-    timer_ = this->create_wall_timer(
+    timer_ = this->create_timer(
       5ms, std::bind(&WalkForward::timerCallback, this));
     last_start_ = this->now();
 

@@ -100,7 +100,7 @@ public:
     kinematics_->spinUntilInitialized();
 
     // Main timer callback, which moves the legs
-    timer_ = this->create_wall_timer(
+    timer_ = this->create_timer(
       20ms, std::bind(&FollowVelocity::timerCallback, this));
     last_start_ = this->now();
 
