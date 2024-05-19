@@ -41,6 +41,7 @@ RUN apt update && \
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3-pip \
+    vim \
     gdb
 
 # Install Python packages
