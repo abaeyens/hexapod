@@ -16,7 +16,7 @@
   <xacro:property name="leg_spreading_angle" value="0.5236" />
   <xacro:property name="leg_a_length" value="0.060" />
   <xacro:property name="leg_b_length" value="0.060" />
-  <xacro:property name="leg_c_length" value="0.060" />
+  <xacro:property name="leg_c_length" value="0.080" />
   <xacro:property name="servo_velocity_limit" value="5.6" />
   <xacro:property name="servo_effort_limit" value="1.5" />
   <xacro:property name="servo_static_friction" value="0.3" />

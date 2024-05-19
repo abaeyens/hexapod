@@ -104,9 +104,6 @@ public:
       20ms, std::bind(&FollowVelocity::timerCallback, this));
     last_start_ = this->now();
 
-    // Slowly walk forward
-    //cmd_vel_.vel.x(20e-3);
-    cmd_vel_.rot.z(10 * M_PI/180);
   }
 private:
   inline GaitPhase getLegPhase(const int i)
@@ -117,11 +114,6 @@ private:
 
   void cmdVelCallback(const geometry_msgs::msg::TwistStamped & msg)
   {
-    // Don't change velocity if any leg in phase FALLING
-    const bool falling =
-      left_phase_ == GaitPhase::FALLING || right_phase_ == GaitPhase::FALLING;
-    if (falling) return;
-
     cmd_vel_.vel.x(msg.twist.linear.x);
     cmd_vel_.vel.y(msg.twist.linear.y);
     cmd_vel_.vel.z(msg.twist.linear.z);
@@ -134,18 +126,32 @@ private:
   void timerCallback()
   {
     const rclcpp::Time now = this->now();
+    // If velocity reference too old, don't do anything
+    const double cmd_vel_oldness = (now - cmd_vel_stamp_).seconds();
+    if (cmd_vel_oldness > cmd_vel_timeout_) {
+      RCLCPP_INFO_THROTTLE(
+        this->get_logger(), *this->get_clock(), 2000,
+        "Received cmd_vel timed out (%.2f > %.2f s).",
+        cmd_vel_oldness, cmd_vel_timeout_);
+      return;
+    }
+
+    // Don't change velocity if any leg in phase FALLING
+    const bool falling =
+      left_phase_ == GaitPhase::FALLING || right_phase_ == GaitPhase::FALLING;
+    if (!falling) cmd_vel_smoothed_ = cmd_vel_;
+
     //const double dt = (now - last_start_).seconds();
     const double dt = 20e-3;
     const double duration_vertical = (pzmax_ - pzmin_) / vzmax_;
-  
+
     // Velocity of each foot
     std::vector<KDL::Vector> foot_velocities(nb_legs_);
     for (int i = 0; i < nb_legs_; i++) {
       // TODO avoid writing out vector cross product
-      const KDL::Twist & v = cmd_vel_;
-      const KDL::Vector r = getLegPhase(i) == GaitPhase::DOWN ?
-        legs_[i].foot_center_position + legs_[i].foot_relative_position :
-        legs_[i].foot_center_position;
+      const KDL::Twist & v = cmd_vel_smoothed_;
+      const KDL::Vector r =
+        legs_[i].foot_center_position + legs_[i].foot_relative_position;
       foot_velocities[i] = -KDL::Vector(
         v.vel.x() - v.rot.z() * r.y(), v.vel.y() + v.rot.z() * r.x(), 0);
     }
@@ -230,6 +236,11 @@ private:
         }
         case GaitPhase::FALLING:
           p.z(std::max(pzmin_, p.z() - vzmax_ * dt));
+          if (p.z() < pzsync_) {
+            // Foot close to ground, so already start moving it horizontally
+            // such that it will be up to speed when it touches the ground.
+            p += foot_velocities[i] * dt;
+          }
           break;
       }
     }
@@ -289,24 +300,29 @@ private:
     gait_phase_right_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
   std::shared_ptr<hexapod_kinematics::Kinematics> kinematics_;
-  rclcpp::Time last_start_;
+  rclcpp::Time last_start_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
   std::vector<Leg> legs_;
   KDL::Twist cmd_vel_;
-  rclcpp::Time cmd_vel_stamp_;
+  KDL::Twist cmd_vel_smoothed_;
+  rclcpp::Time cmd_vel_stamp_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
   // Phases of the two front feet
   // alternating feet are in phase
   GaitPhase left_phase_;
   GaitPhase right_phase_;
 
-  // Hardware paramaters
+  // Parameters
+  static constexpr double cmd_vel_timeout_ = 0.3;
+
+  // Hardware parameters
   // TODO derive those from properties.urdf.xacro
-  static constexpr double pxmax_ = 0.050;
-  static constexpr double pymax_ = 0.025;
-  static constexpr double pzmin_ = -0.080;
-  static constexpr double pzmax_ = -0.040;
+  static constexpr double pxmax_ = 0.045;
+  static constexpr double pymax_ = 0.035;
+  static constexpr double pzmin_ = -0.100;
+  static constexpr double pzmax_ = -0.070;
+  static constexpr double pzsync_ = -0.090;
   static constexpr double vxmax_ = 0.67 * 1/2;
   static constexpr double vymax_ = 0.34 * 1/2;
-  static constexpr double vzmax_ = 0.34 * 1/3;
+  static constexpr double vzmax_ = 0.34 * 1/2;
   // TODO support other values than 6
   static const int nb_legs_ = 6;
   static const int nb_joints_per_leg_ = 3;
