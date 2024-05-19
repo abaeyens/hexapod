@@ -59,19 +59,22 @@ public:
     cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
       "cmd_vel", 10, std::bind(&FollowVelocity::cmdVelCallback, this, _1));
     // Publisher for joint angle references
-    publisher_ = this->create_publisher<actuator_msgs::msg::Actuators>(
+    actuators_pub_ = this->create_publisher<actuator_msgs::msg::Actuators>(
       "actuators", 1);
-    // Publisher for cartesian foot positions
-    relative_foot_position_publisher_ =
+    // Adjusted velocity
+    cmd_vel_adj_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
+      "cmd_vel_adj", 10);
+    // Cartesian relative foot positions
+    relative_foot_position_pub_ =
       this->create_publisher<hexapod_msgs::msg::Vector3Array>(
-        "relative_foot_positions", 1);
-    // Publisher for gait phase
-    gait_phase_left_publisher_ =
+        "relative_foot_positions", 10);
+    // Gait phase
+    gait_phase_left_pub_ =
       this->create_publisher<hexapod_msgs::msg::GaitPhase>(
-        "gait_phase_left", 1);
-    gait_phase_right_publisher_ =
+        "gait_phase_left", 10);
+    gait_phase_right_pub_ =
       this->create_publisher<hexapod_msgs::msg::GaitPhase>(
-        "gait_phase_right", 1);
+        "gait_phase_right", 10);
 
     // Initialize legs
     legs_.resize(nb_legs_);
@@ -141,12 +144,14 @@ private:
       left_phase_ == GaitPhase::FALLING || right_phase_ == GaitPhase::FALLING;
     if (!falling) cmd_vel_smoothed_ = cmd_vel_;
 
+    // Timestep
     //const double dt = (now - last_start_).seconds();
     const double dt = 20e-3;
     const double duration_vertical = (pzmax_ - pzmin_) / vzmax_;
 
     // Velocity of each foot
     std::vector<KDL::Vector> foot_velocities(nb_legs_);
+    double max_vel_ratio = 0;
     for (int i = 0; i < nb_legs_; i++) {
       // TODO avoid writing out vector cross product
       const KDL::Twist & v = cmd_vel_smoothed_;
@@ -154,6 +159,17 @@ private:
         legs_[i].foot_center_position + legs_[i].foot_relative_position;
       foot_velocities[i] = -KDL::Vector(
         v.vel.x() - v.rot.z() * r.y(), v.vel.y() + v.rot.z() * r.x(), 0);
+      const double vel_ratio_mxy = std::max(
+        abs(foot_velocities[i].x()) / vxmax_,
+        abs(foot_velocities[i].y()) / vymax_);
+      if (vel_ratio_mxy > max_vel_ratio) max_vel_ratio = vel_ratio_mxy;
+    }
+    // Clamp velocity to ratio of max velocity
+    // Vectors are scaled, i.e. all components are reduced by the same factor.
+    if (max_vel_ratio > max_velocity_ratio_) {
+      const double m = max_velocity_ratio_ / max_vel_ratio;
+      cmd_vel_smoothed_ = cmd_vel_smoothed_ * m;
+      for (KDL::Vector & v: foot_velocities) v = v * m;
     }
 
     // Get minimum duration until any of the supporting legs
@@ -230,6 +246,8 @@ private:
             (goal_pos.x() - p.x()) / duration_to_down,
             (goal_pos.y() - p.y()) / duration_to_down,
             0);
+          // Move slightly faster (factor alpha) in the beginning
+          // to improve the likelihood of arriving on time.
           const double alpha = 1.2;
           p += alpha * hor_foot_velocity * dt;
           break;
@@ -266,8 +284,18 @@ private:
         msg.position[i*nb_joints_per_leg_+j] = legs_[i].joint_angles(j);
       }
     }
-    publisher_->publish(msg);
+    actuators_pub_->publish(msg);
   
+    // Adjusted velocity (for odometry and debug)
+    {
+      geometry_msgs::msg::TwistStamped msg;
+      msg.header.stamp = now;
+      msg.twist.linear.x = cmd_vel_smoothed_.vel.x();
+      msg.twist.linear.y = cmd_vel_smoothed_.vel.y();
+      msg.twist.angular.z = cmd_vel_smoothed_.rot.z();
+      cmd_vel_adj_pub_->publish(msg);
+    }
+
     // For debug, also publish relative foot cartesian positions
     hexapod_msgs::msg::Vector3Array foot_positions_msg;
     foot_positions_msg.header.stamp = now;
@@ -277,29 +305,35 @@ private:
       foot_positions_msg.vectors[i].y = legs_[i].foot_relative_position.y();
       foot_positions_msg.vectors[i].z = legs_[i].foot_relative_position.z();
     }
-    relative_foot_position_publisher_->publish(foot_positions_msg);
+    relative_foot_position_pub_->publish(foot_positions_msg);
+  
     // and publish gait phases
     hexapod_msgs::msg::GaitPhase phase_left_msg;
     phase_left_msg.header.stamp = now;
     phase_left_msg.phase = static_cast<uint8_t>(left_phase_);
-    gait_phase_left_publisher_->publish(phase_left_msg);
+    gait_phase_left_pub_->publish(phase_left_msg);
     hexapod_msgs::msg::GaitPhase phase_right_msg;
     phase_right_msg.header.stamp = now;
     phase_right_msg.phase = static_cast<uint8_t>(right_phase_);
-    gait_phase_right_publisher_->publish(phase_right_msg);
+    gait_phase_right_pub_->publish(phase_right_msg);
   }
 
   rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr
     cmd_vel_sub_;
-  rclcpp::Publisher<actuator_msgs::msg::Actuators>::SharedPtr publisher_;
+  rclcpp::Publisher<actuator_msgs::msg::Actuators>::SharedPtr
+    actuators_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr
+    cmd_vel_adj_pub_;
   rclcpp::Publisher<hexapod_msgs::msg::Vector3Array>::SharedPtr
-    relative_foot_position_publisher_;
+    relative_foot_position_pub_;
   rclcpp::Publisher<hexapod_msgs::msg::GaitPhase>::SharedPtr
-    gait_phase_left_publisher_;
+    gait_phase_left_pub_;
   rclcpp::Publisher<hexapod_msgs::msg::GaitPhase>::SharedPtr
-    gait_phase_right_publisher_;
+    gait_phase_right_pub_;
+
   rclcpp::TimerBase::SharedPtr timer_;
   std::shared_ptr<hexapod_kinematics::Kinematics> kinematics_;
+
   rclcpp::Time last_start_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
   std::vector<Leg> legs_;
   KDL::Twist cmd_vel_;
@@ -312,6 +346,7 @@ private:
 
   // Parameters
   static constexpr double cmd_vel_timeout_ = 0.3;
+  static constexpr double max_velocity_ratio_ = 0.25;
 
   // Hardware parameters
   // TODO derive those from properties.urdf.xacro
@@ -320,8 +355,8 @@ private:
   static constexpr double pzmin_ = -0.100;
   static constexpr double pzmax_ = -0.070;
   static constexpr double pzsync_ = -0.090;
-  static constexpr double vxmax_ = 0.67 * 1/2;
-  static constexpr double vymax_ = 0.34 * 1/2;
+  static constexpr double vxmax_ = 0.67;
+  static constexpr double vymax_ = 0.34;
   static constexpr double vzmax_ = 0.34 * 1/2;
   // TODO support other values than 6
   static const int nb_legs_ = 6;

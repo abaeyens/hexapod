@@ -3,6 +3,9 @@
 Generate a cmd_vel reference consisting
 of a forward motion in the world frame
 coupled with a simultaneous body rotation.
+
+Usage:
+ros2 run app walk_sideways_while_rotating --ros-args -p use_sim_time:=true
 """
 import math
 
@@ -12,9 +15,9 @@ from std_msgs.msg import Header
 from geometry_msgs.msg import TwistStamped
 
 # Forward velocity
-VFORWARD = 0.04
+VFORWARD = 0.08
 # Angular velocity
-OMEGA = 10 * math.pi/180
+OMEGA = 20 * math.pi/180
 # Timestep
 DT = 0.1
 
