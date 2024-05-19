@@ -55,6 +55,7 @@ install(TARGETS
 install(
   PROGRAMS
     scripts/move_legs
+    scripts/walk_sideways_while_rotating
   DESTINATION lib/${PROJECT_NAME}
 )
 
