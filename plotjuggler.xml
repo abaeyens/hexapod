@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
  <tabbed_widget name="Main Window" parent="main_window">
-  <Tab containers="1" tab_name="Joints positions">
+  <Tab tab_name="Joints positions" containers="1">
    <Container>
-    <DockSplitter sizes="0.501182;0.498818" orientation="-" count="2">
-     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+    <DockSplitter orientation="-" count="2" sizes="0.501182;0.498818">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="0.790913" bottom="-2.199912"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.742236" right="348.728572" left="326.943558" bottom="-2.142001"/>
         <limitY/>
         <curve name="/actuators/position[0]" color="#ff0000"/>
         <curve name="/joint_states/position[0]" color="#ba3232"/>
@@ -18,8 +18,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="0.468027" bottom="-1.876113"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.432541" right="348.728572" left="326.943558" bottom="-2.091755"/>
         <limitY/>
         <curve name="/actuators/position[3]" color="#ff0000"/>
         <curve name="/joint_states/position[3]" color="#ba3232"/>
@@ -30,8 +30,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="0.419000" bottom="-2.190846"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.230264" right="348.728572" left="326.943558" bottom="-2.164701"/>
         <limitY/>
         <curve name="/actuators/position[6]" color="#ff0000"/>
         <curve name="/joint_states/position[6]" color="#ba3232"/>
@@ -42,10 +42,10 @@
        </plot>
       </DockArea>
      </DockSplitter>
-     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="2.190840" bottom="-0.419001"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="2.122586" right="348.728572" left="326.943558" bottom="-0.338805"/>
         <limitY/>
         <curve name="/actuators/position[9]" color="#ff0000"/>
         <curve name="/joint_states/position[9]" color="#ba3232"/>
@@ -56,8 +56,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="1.876243" bottom="-0.473371"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="2.088323" right="348.728572" left="326.943558" bottom="-0.469394"/>
         <limitY/>
         <curve name="/actuators/position[12]" color="#ff0000"/>
         <curve name="/joint_states/position[12]" color="#ba3232"/>
@@ -68,8 +68,8 @@
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000000" right="5.158281" top="2.199916" bottom="-0.790913"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="2.176824" right="348.728572" left="326.943558" bottom="-0.718908"/>
         <limitY/>
         <curve name="/actuators/position[15]" color="#ff0000"/>
         <curve name="/joint_states/position[15]" color="#ba3232"/>
@@ -83,50 +83,50 @@
     </DockSplitter>
    </Container>
   </Tab>
-  <Tab containers="1" tab_name="Joint velocities">
+  <Tab tab_name="Joint velocities" containers="1">
    <Container>
-    <DockSplitter sizes="0.500394;0.499606" orientation="-" count="2">
-     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+    <DockSplitter orientation="-" count="2" sizes="0.500394;0.499606">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="3.187662" bottom="-5.814333"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.812410" right="348.728572" left="328.729904" bottom="-3.108806"/>
         <limitY/>
         <curve name="/joint_states/velocity[0]" color="#ff7f0e"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.880000" right="348.728572" left="328.729904" bottom="-5.880000"/>
         <limitY/>
         <curve name="/joint_states/velocity[1]" color="#f14cc1"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.880000" right="348.728572" left="328.729904" bottom="-5.880000"/>
         <limitY/>
         <curve name="/joint_states/velocity[2]" color="#9467bd"/>
        </plot>
       </DockArea>
      </DockSplitter>
-     <DockSplitter sizes="0.333333;0.333333;0.333333" orientation="|" count="3">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="5.816526" bottom="-3.277555"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.880000" right="348.728572" left="328.729904" bottom="-5.880000"/>
         <limitY/>
         <curve name="/joint_states/velocity[15]" color="#17becf"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.880000" right="348.728572" left="328.729904" bottom="-5.880000"/>
         <limitY/>
         <curve name="/joint_states/velocity[16]" color="#bcbd22"/>
        </plot>
       </DockArea>
       <DockArea name="...">
-       <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-        <range left="0.000142" right="5.158281" top="5.880000" bottom="-5.880000"/>
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="5.880000" right="348.728572" left="328.729904" bottom="-5.880000"/>
         <limitY/>
         <curve name="/joint_states/velocity[17]" color="#1f77b4"/>
        </plot>
@@ -135,28 +135,222 @@
     </DockSplitter>
    </Container>
   </Tab>
-  <Tab containers="1" tab_name="Twist">
+  <Tab tab_name="Twist and IMU" containers="1">
    <Container>
-    <DockSplitter sizes="0.333596;0.332808;0.333596" orientation="-" count="3">
+    <DockSplitter orientation="-" count="1" sizes="1">
+     <DockSplitter orientation="|" count="2" sizes="0.5;0.5">
+      <DockSplitter orientation="-" count="3" sizes="0.333596;0.332808;0.333596">
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="0.161754" right="348.715931" left="326.943655" bottom="-0.159045"/>
+         <limitY/>
+         <curve name="/odom/twist/twist/linear/x" color="#1f77b4"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="0.170104" right="348.715931" left="326.943655" bottom="-0.180995"/>
+         <limitY/>
+         <curve name="/odom/twist/twist/linear/y" color="#d62728"/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="0.714365" right="348.715931" left="326.943655" bottom="-0.017424"/>
+         <limitY/>
+         <curve name="/odom/twist/twist/angular/z" color="#1ac938"/>
+         <curve name="/cmd_vel/twist/angular/z" color="#1f77b4"/>
+         <curve name="/cmd_vel_adj/twist/angular/z" color="#d62728"/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+      <DockSplitter orientation="-" count="3" sizes="0.333596;0.332808;0.333596">
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="1.000000" right="1.000000" left="0.000000" bottom="0.000000"/>
+         <limitY/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="1.000000" right="1.000000" left="0.000000" bottom="0.000000"/>
+         <limitY/>
+        </plot>
+       </DockArea>
+       <DockArea name="...">
+        <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+         <range top="1.000000" right="1.000000" left="0.000000" bottom="0.000000"/>
+         <limitY/>
+        </plot>
+       </DockArea>
+      </DockSplitter>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="Foot positions" containers="1">
+   <Container>
+    <DockSplitter orientation="-" count="2" sizes="0.500394;0.499606">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.043737" right="346.942404" left="326.943691" bottom="-0.103506"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[0]/x" color="#1ac938"/>
+        <curve name="/relative_foot_positions/vectors[0]/y" color="#ff7f0e"/>
+        <curve name="/relative_foot_positions/vectors[0]/z" color="#f14cc1"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.048498" right="346.942404" left="326.943691" bottom="-0.103622"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[1]/x" color="#9467bd"/>
+        <curve name="/relative_foot_positions/vectors[1]/y" color="#17becf"/>
+        <curve name="/relative_foot_positions/vectors[1]/z" color="#bcbd22"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.048207" right="346.942404" left="326.943691" bottom="-0.103615"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[2]/x" color="#1f77b4"/>
+        <curve name="/relative_foot_positions/vectors[2]/y" color="#d62728"/>
+        <curve name="/relative_foot_positions/vectors[2]/z" color="#1ac938"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.049013" right="346.942404" left="326.943691" bottom="-0.103634"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[3]/x" color="#ff7f0e"/>
+        <curve name="/relative_foot_positions/vectors[3]/y" color="#f14cc1"/>
+        <curve name="/relative_foot_positions/vectors[3]/z" color="#9467bd"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.047771" right="346.942404" left="326.943691" bottom="-0.103604"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[4]/x" color="#17becf"/>
+        <curve name="/relative_foot_positions/vectors[4]/y" color="#bcbd22"/>
+        <curve name="/relative_foot_positions/vectors[4]/z" color="#1f77b4"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.048784" right="346.942404" left="326.943691" bottom="-0.103629"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[5]/x" color="#d62728"/>
+        <curve name="/relative_foot_positions/vectors[5]/y" color="#1ac938"/>
+        <curve name="/relative_foot_positions/vectors[5]/z" color="#ff7f0e"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="Foot positions parametric" containers="1">
+   <Container>
+    <DockSplitter orientation="-" count="2" sizes="0.500394;0.499606">
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="-0.049610" right="0.042351" left="-0.046687" bottom="-0.120390"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[0]/[x;z]" curve_x="/relative_foot_positions/vectors[0]/x" curve_y="/relative_foot_positions/vectors[0]/z" color="#f14cc1"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="-0.055898" right="0.036386" left="-0.036559" bottom="-0.114102"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[0]/[y;z]" curve_x="/relative_foot_positions/vectors[0]/y" curve_y="/relative_foot_positions/vectors[0]/z" color="#9467bd"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="0.036386" right="0.043541" left="-0.047877" bottom="-0.036559"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[0]/[x;y]" curve_x="/relative_foot_positions/vectors[0]/x" curve_y="/relative_foot_positions/vectors[0]/y" color="#ff7f0e"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+     <DockSplitter orientation="|" count="3" sizes="0.333333;0.333333;0.333333">
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="-0.047352" right="0.047127" left="-0.047415" bottom="-0.122648"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[1]/[x;z]" curve_x="/relative_foot_positions/vectors[1]/x" curve_y="/relative_foot_positions/vectors[1]/z" color="#bcbd22"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="-0.060357" right="0.026340" left="-0.035543" bottom="-0.109643"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[1]/[y;z]" curve_x="/relative_foot_positions/vectors[1]/y" curve_y="/relative_foot_positions/vectors[1]/z" color="#1f77b4"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="XYPlot" style="Lines" flip_x="false">
+        <range top="0.033047" right="0.047127" left="-0.047415" bottom="-0.042250"/>
+        <limitY/>
+        <curve name="/relative_foot_positions/vectors[1]/[x;y]" curve_x="/relative_foot_positions/vectors[1]/x" curve_y="/relative_foot_positions/vectors[1]/y" color="#17becf"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="Phases" containers="1">
+   <Container>
+    <DockSplitter orientation="-" count="2" sizes="0.500394;0.499606">
      <DockArea name="...">
-      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-       <range left="0.030042" right="5.130644" top="0.362329" bottom="0.016315"/>
+      <plot flip_y="false" mode="TimeSeries" style="StepsInv" flip_x="false">
+       <range top="3.075000" right="346.942374" left="326.943762" bottom="-0.075000"/>
        <limitY/>
-       <curve name="/odom/twist/twist/linear/x" color="#1f77b4"/>
+       <curve name="/gait_phase_left/phase" color="#1f77b4"/>
+       <curve name="/gait_phase_right/phase" color="#d62728"/>
       </plot>
      </DockArea>
      <DockArea name="...">
-      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-       <range left="0.030042" right="5.130644" top="0.079509" bottom="-0.079079"/>
+      <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+       <range top="1.000000" right="1.000000" left="0.000000" bottom="0.000000"/>
        <limitY/>
-       <curve name="/odom/twist/twist/linear/y" color="#d62728"/>
       </plot>
      </DockArea>
+    </DockSplitter>
+   </Container>
+  </Tab>
+  <Tab tab_name="cmd_vel" containers="1">
+   <Container>
+    <DockSplitter orientation="-" count="2" sizes="0.500394;0.499606">
+     <DockSplitter orientation="|" count="2" sizes="0.5;0.5">
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.084000" right="348.687758" left="326.943655" bottom="-0.084000"/>
+        <limitY/>
+        <curve name="/cmd_vel/twist/linear/x" color="#f14cc1"/>
+        <curve name="/cmd_vel/twist/linear/y" color="#9467bd"/>
+        <curve name="/cmd_vel_adj/twist/linear/x" color="#17becf"/>
+        <curve name="/cmd_vel_adj/twist/linear/y" color="#bcbd22"/>
+       </plot>
+      </DockArea>
+      <DockArea name="...">
+       <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+        <range top="0.449066" right="348.687758" left="326.943655" bottom="0.249066"/>
+        <limitY/>
+        <curve name="/cmd_vel/twist/angular/z" color="#1f77b4"/>
+        <curve name="/cmd_vel_adj/twist/angular/z" color="#d62728"/>
+       </plot>
+      </DockArea>
+     </DockSplitter>
      <DockArea name="...">
-      <plot flip_x="false" flip_y="false" style="Lines" mode="TimeSeries">
-       <range left="0.030042" right="5.130644" top="0.273728" bottom="-0.265050"/>
+      <plot flip_y="false" mode="TimeSeries" style="Lines" flip_x="false">
+       <range top="1.000000" right="1.000000" left="0.000000" bottom="0.000000"/>
        <limitY/>
-       <curve name="/odom/twist/twist/angular/z" color="#1ac938"/>
       </plot>
      </DockArea>
     </DockSplitter>
@@ -169,7 +363,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters delimiter="0" time_axis=""/>
+   <parameters time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS2 bags">
@@ -187,7 +381,7 @@
    <max_array_size value="100"/>
    <boolean_strings_to_number value="true"/>
    <remove_suffix_from_strings value="true"/>
-   <selected_topics value="/actuators;/joint_states;/odom"/>
+   <selected_topics value="/actuators;/cmd_vel;/gait_phase_left;/gait_phase_right;/imu;/joint_states;/odom;/relative_foot_positions;/cmd_vel_adj"/>
   </plugin>
   <plugin ID="UDP Server"/>
   <plugin ID="WebSocket Server"/>
@@ -205,6 +399,8 @@
  <previouslyLoaded_Datafiles/>
  <previouslyLoaded_Streamer name="ROS2 Topic Subscriber"/>
  <!-- - - - - - - - - - - - - - - -->
+ <customMathEquations/>
+ <snippets/>
  <!-- - - - - - - - - - - - - - - -->
 </root>
 
