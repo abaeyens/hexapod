@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot name="leg" >
+  <!-- base_link -->
+  <link name="base_link" />
+
+  <!-- leg -->
+  <!-- upper leg -->
+  <link name="upper_leg" />
+  <joint name="hip" type="revolute">
+    <parent link="base_link" />
+    <child link="upper_leg" />
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 0" />
+    <limit lower="-0.5" upper="0.5" effort="10.0" velocity="1.0" />
+  </joint>
+  <!-- lower leg -->
+  <link name="lower_leg" />
+  <joint name="knee" type="revolute">
+    <parent link="upper_leg" />
+    <child link="lower_leg" />
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 -0.50" />
+    <limit lower="-0.5" upper="0.5" effort="10.0" velocity="1.0" />
+  </joint>
+  <!-- foot -->
+  <link name="foot" />
+  <joint name="ankle" type="fixed">
+    <parent link="lower_leg" />
+    <child link="foot" />
+    <origin xyz="0 0 -0.50" />
+  </joint>
+</robot>

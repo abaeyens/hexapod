@@ -12,21 +12,27 @@ namespace hexapod_kinematics
 {
 class Kinematics : public rclcpp::Node
 {
-public:
+ public:
   Kinematics() : Node("") {};
   Kinematics(
-    const std::vector<std::string>& feet_links,
-    const std::string& base_link="base_link");
+      const std::vector<std::string>& feet_links,
+      const std::string& base_link="base_link",
+      const bool subscribe_to_robot_description=true);
+  void robotDescriptionCallback(const std_msgs::msg::String& msg);
   void spinUntilInitialized();
   // TODO use more suitable type for goal_pos?
   int cartToJnt(
-    const size_t leg_index, const KDL::JntArray& q_init,
-    const KDL::Frame& T_base_goal, KDL::JntArray& q_out);
+      const size_t leg_index, const KDL::JntArray& q_init,
+      const KDL::Frame& T_base_goal, KDL::JntArray& q_out);
   bool foldAndClampJointAnglesToLimits(
-    const size_t leg_index, KDL::JntArray & q);
+      const size_t leg_index, KDL::JntArray & q);
 
-private:
-  void robotDescriptionCallback(const std_msgs::msg::String& msg);
+  // Introspection for testing
+  std::vector<KDL::Chain>& getChains() {return chains_;};
+  std::vector<std::vector<urdf::JointLimits>>&
+      getJointLimits() {return joint_limits_;};
+
+ private:
   void createSolvers();
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
