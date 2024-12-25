@@ -188,6 +188,14 @@
     <!-- TODO set correct pose -->
     <origin xyz="0 0 0.05" />
   </joint>
+  <gazebo reference="imu">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>90</update_rate>
+      <visualize>true</visualize>
+      <topic>/model/hexapod/imu</topic>
+    </sensor>
+  </gazebo>
 
   <!-- Gazebo (simulation only) -->
   <!-- docs: https://github.com/gazebosim/gz-sim/tree/main/src/systems -->
@@ -204,11 +212,6 @@
       filename="gz-sim-joint-state-publisher-system"
       name="gz::sim::systems::JointStatePublisher">
       <topic>/model/hexapod/joint_state</topic>
-    </plugin>
-    <!-- TODO doesn't work, no imu topic in Gazebo gets published -->
-    <plugin
-      filename="gz-sim-imu-system"
-      name="gz::sim::systems::Imu">
     </plugin>
   </gazebo>
 </robot>
