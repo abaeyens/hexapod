@@ -91,8 +91,7 @@ class TestHexapod(unittest.TestCase):
         """Does the simulator publish odometry and IMU?"""
         wait_for_topics = launch_testing_ros.WaitForTopics(
             [('odom', nav_msgs.msg.Odometry),
-             # TODO fix IMU not getting published
-             #('imu', sensor_msgs.msg.IMU),
+             ('imu', sensor_msgs.msg.Imu),
              ], timeout=10.0)
         assert wait_for_topics.wait()
         wait_for_topics.shutdown()
