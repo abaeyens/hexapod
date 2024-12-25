@@ -19,7 +19,7 @@
   ros_type_name: sensor_msgs/msg/JointState
   direction: GZ_TO_ROS
 
-- gz_topic_name: /model/hexapod/imu_sensor
+- gz_topic_name: /model/hexapod/imu
   ros_topic_name: imu
   gz_type_name: gz.msgs.IMU
   ros_type_name: sensor_msgs/msg/Imu
