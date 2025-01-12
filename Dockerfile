@@ -1,5 +1,9 @@
-FROM osrf/ros:jazzy-desktop@sha256:2dad977b32fe39f7b5973f3cfb95ce5e7102bc71a25b382ec5d17b837839ebc2
-RUN touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu
+ARG ROS_DISTRO=jazzy
+
+FROM osrf/ros:$ROS_DISTRO-desktop
+RUN if ["$ROS_DISTRO" == "jazzy" ]; \
+    then touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu; \
+    fi
 
 
 # Install prerequisites
@@ -13,17 +17,17 @@ RUN apt update && \
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ros-dev-tools \
-    ros-jazzy-ros-gz \
+    ros-$ROS_DISTRO-ros-gz \
     && rm -rf /var/lib/apt/lists/*
 
 # Install other ROS-related packages
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ros-jazzy-rqt* \
-    ros-jazzy-plotjuggler-ros \
-    ros-jazzy-xacro \
-    ros-jazzy-joint-state-publisher \
-    ros-jazzy-joint-state-publisher-gui \
+    ros-$ROS_DISTRO-joint-state-publisher \
+    ros-$ROS_DISTRO-joint-state-publisher-gui \
+    ros-$ROS_DISTRO-plotjuggler-ros \
+    ros-$ROS_DISTRO-rqt* \
+    ros-$ROS_DISTRO-xacro \
     && rm -rf /var/lib/apt/lists/*
 
 # Install other non-ROS packages
@@ -64,7 +68,7 @@ RUN \
     echo 'PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"' >> /home/$USERNAME/.bashrc  && \
     echo 'export PYTHONWARNINGS' >> /home/$USERNAME/.bashrc && \
     # Source ROS 2 setup
-    echo "source /opt/ros/jazzy/setup.bash" >> /home/$USERNAME/.bashrc && \
+    echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc && \
     echo "source install/setup.bash" >> /home/$USERNAME/.bashrc
 
 # Switch to the non-root user
