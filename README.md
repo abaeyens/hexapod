@@ -1,7 +1,7 @@
 # Hexapod
 
 ## Get up and running
-```bash
+```
 git clone git@github.com:abaeyens/hexapod-MPC.git
 git submodule update --init --recursive
 docker compose build --pull
@@ -16,6 +16,14 @@ For improved DDS performance, a few changes on the host side are necessary.
 From this repo's root directory:
 ```bash
 sudo ln -s ${PWD}/etc/sysctl.d/ros2-dds.conf /etc/sysctl.d/ros2-dds.conf
+```
+
+## Running tests
+Several packages have tests (including Gazebo simulations),
+run them and print the results with
+```
+colcon test --event-handlers console_direct+
+xunit-viewer -r build -c
 ```
 
 ## Leg and joint naming and indexing
