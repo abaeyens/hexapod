@@ -21,6 +21,7 @@ RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     ros-jazzy-rqt* \
     ros-jazzy-plotjuggler-ros \
+    ros-jazzy-tf-transformations \
     ros-jazzy-xacro \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-joint-state-publisher-gui \
