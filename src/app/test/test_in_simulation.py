@@ -1,6 +1,11 @@
+import cmath
+import math
 import os
 import time
 import unittest
+
+import numpy as np
+import tf_transformations
 
 import rclpy
 import geometry_msgs.msg
@@ -10,7 +15,7 @@ import std_msgs.msg
 
 import launch
 import launch_ros
-import launch_testing.actions
+import launch_testing
 import launch_testing_ros
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import IncludeLaunchDescription
@@ -18,7 +23,10 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
-def generate_test_description():
+@launch_testing.parametrize(
+        'walk_type',
+        (('forward', 'leftward', 'reverse_clockwise')))
+def generate_test_description(walk_type):
     return (
         launch.LaunchDescription(
             [
@@ -96,38 +104,87 @@ class TestHexapod(unittest.TestCase):
         assert wait_for_topics.wait()
         wait_for_topics.shutdown()
 
-    def test_walk_forward(self, proc_output):
-        """Does our pet walk forward sufficiently quickly?"""
-        max_duration = 10
-        goal_velocity = 0.08
-        min_distance = max_duration * goal_velocity * 0.8
+    def test_walk_around(self, proc_output, walk_type):
+        """Does our pet walk around sufficiently quickly?"""
+        # Settings
+        duration = 10
+        goal_velocity_linear = 0.08
+        goal_velocity_angular = 0.15
         velocity_publishing_rate = 10
-        # simulation must run at least at 25% of real time
-        wall_end_time = time.time() + max_duration * 4
-        positions = []
+        allowed_relative_error = 0.2
+        ## simulation must run at least at 25% of real time
+        minimum_allowed_simulation_speed = 0.25
+
+        # Store received poses
+        poses = []
         sub = self.node.create_subscription(
             nav_msgs.msg.Odometry, 'odom',
-            lambda m: positions.append(m.pose.pose.position), 10)
+            lambda m: poses.append(m.pose.pose), 10)
+
+        # Publish velocity reference
         pub = self.node.create_publisher(
             geometry_msgs.msg.TwistStamped, 'cmd_vel', 10)
         def publish_cmd_vel():
             msg = geometry_msgs.msg.TwistStamped()
             msg.header = std_msgs.msg.Header()
             msg.header.stamp = self.node.get_clock().now().to_msg()
-            msg.twist.linear.x = goal_velocity
+            match walk_type:
+                case 'forward':
+                    msg.twist.linear.x = goal_velocity_linear
+                case 'leftward':
+                    msg.twist.linear.y = goal_velocity_linear
+                case 'reverse_clockwise':
+                    msg.twist.angular.z = goal_velocity_angular
+                case _:
+                    raise RuntimeError()
             pub.publish(msg)
         timer = self.node.create_timer(
             1.0/velocity_publishing_rate, publish_cmd_vel)
+
         try:
+            # Spin until desired simulation duration elapsed
             end_time = self.node.get_clock().now() \
-                + rclpy.duration.Duration(seconds=max_duration)
+                + rclpy.duration.Duration(seconds=duration)
+            # ... or too much wall duration elapsed
+            wall_end_time = time.time() + duration/minimum_allowed_simulation_speed
             while self.node.get_clock().now() < end_time:
                 if time.time() > wall_end_time:
                     raise Exception('Simulation running too slow, aborting.')
                 rclpy.spin_once(self.node, timeout_sec=1)
-            assert len(positions) >= 2
-            assert positions[-1].x - positions[0].x > min_distance
+            # Compare walked path of poses with given reference
+            assert len(poses) >= 2, 'Must have received at least two poses.'
+            match walk_type:
+                case 'forward':
+                    goal_distance_linear = duration * goal_velocity_linear
+                    self.assertAlmostEqual(
+                        poses[-1].position.x, goal_distance_linear,
+                        delta=goal_distance_linear*allowed_relative_error)
+                    self.assertAlmostEqual(
+                        poses[-1].position.y, 0.0,
+                        delta=goal_distance_linear*allowed_relative_error)
+                case 'leftward':
+                    goal_distance_linear = duration * goal_velocity_linear
+                    self.assertAlmostEqual(
+                        poses[-1].position.y, goal_distance_linear,
+                        delta=goal_distance_linear*allowed_relative_error)
+                    self.assertAlmostEqual(
+                        poses[-1].position.x, 0.0,
+                        delta=goal_distance_linear*allowed_relative_error)
+                case 'reverse_clockwise':
+                    yaws = [tf_transformations.euler_from_quaternion(
+                        [p.orientation.x, p.orientation.y,
+                         p.orientation.z, p.orientation.w])[2]
+                    for p in poses]
+                    traveled_yaw = np.unwrap(yaws)[-1]
+                    goal_distance_angular = duration * goal_velocity_angular
+                    self.assertAlmostEqual(
+                        traveled_yaw, goal_distance_angular,
+                        delta=goal_distance_angular*allowed_relative_error,
+                    )
+                case _:
+                    raise RuntimeError()
         finally:
+            # Cleanup, whether tests succeeded or failed
             self.node.destroy_subscription(sub)
             self.node.destroy_publisher(pub)
             self.node.destroy_timer(timer)
