@@ -1,7 +1,7 @@
 ARG ROS_DISTRO=jazzy
 
 FROM osrf/ros:$ROS_DISTRO-desktop
-RUN if ["$ROS_DISTRO" == "jazzy" ]; \
+RUN if [ "$ROS_DISTRO" = "jazzy" ]; \
     then touch /var/mail/ubuntu && chown ubuntu /var/mail/ubuntu && userdel -r ubuntu; \
     fi
 
