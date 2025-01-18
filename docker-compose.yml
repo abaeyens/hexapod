@@ -3,7 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "source /opt/ros/iron/setup.bash && exec bash"
+      args:
+        - ROS_DISTRO=$ROS_DISTRO
+    command: bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && exec bash"
     working_dir: ${PWD}
     volumes:
       - ./:${PWD}
