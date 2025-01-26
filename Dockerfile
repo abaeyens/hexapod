@@ -35,6 +35,7 @@ RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     nodejs npm \
     python3-pip \
+    sudo \
     vim \
     gdb \
     && rm -rf /var/lib/apt/lists/*
@@ -51,28 +52,28 @@ RUN pip install --no-cache-dir --break-system-packages \
 
 
 # Create a non-root user
-ARG USERNAME=user
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID --create-home --shell /bin/bash $USERNAME
+ARG USER
+ARG USER_ID
+ARG GROUP_ID
+RUN groupadd --gid $GROUP_ID $USER && \
+    useradd --uid $USER_ID --gid $GROUP_ID --create-home --shell /bin/bash $USER
 
 # Give sudo privileges to the non-root user if needed
-# RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME
+RUN echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USER
 
 # Set up .bashrc
 RUN \
     # Add terminal coloring for the new user
-    echo 'PS1="(container) ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' >> /home/${USERNAME}/.bashrc && \
+    echo 'PS1="(container) ${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' >> /home/$USER/.bashrc && \
     # Disable "EasyInstallDeprecationWarning: easy_install command is deprecated"
-    echo 'PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"' >> /home/$USERNAME/.bashrc  && \
-    echo 'export PYTHONWARNINGS' >> /home/$USERNAME/.bashrc && \
+    echo 'PYTHONWARNINGS="ignore:easy_install command is deprecated,ignore:setup.py install is deprecated"' >> /home/$USER/.bashrc  && \
+    echo 'export PYTHONWARNINGS' >> /home/$USER/.bashrc && \
     # Source ROS 2 setup
-    echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc && \
-    echo "source install/setup.bash" >> /home/$USERNAME/.bashrc
+    echo "source /opt/ros/jazzy/setup.bash" >> /home/$USER/.bashrc && \
+    echo "source install/setup.bash" >> /home/$USER/.bashrc
 
 # Switch to the non-root user
-USER $USERNAME
+USER $USER
 
 # Set entry point
 CMD ["/bin/bash"]
