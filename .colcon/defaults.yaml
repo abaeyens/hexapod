@@ -3,6 +3,9 @@
         "cmake-args": ["-DCMAKE_BUILD_TYPE=RelWithDebInfo"],
         "merge-install": true,
         "symlink-install": true
+    },
+    "test": {
+        "merge-install": true
     }
 }
 

@@ -27,6 +27,7 @@ RUN apt update && \
     ros-$ROS_DISTRO-joint-state-publisher-gui \
     ros-$ROS_DISTRO-plotjuggler-ros \
     ros-$ROS_DISTRO-rqt* \
+    ros-$ROS_DISTRO-tf-transformations \
     ros-$ROS_DISTRO-xacro \
     && rm -rf /var/lib/apt/lists/*
 

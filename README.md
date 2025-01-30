@@ -2,8 +2,8 @@
 
 ## Get up and running
 ```bash
-git clone git@github.com:abaeyens/hexapod-MPC.git
-cd hexapod-MPC
+git clone git@github.com:abaeyens/hexapod.git
+cd hexapod
 git submodule update --init --recursive
 
 echo -e USER_ID=$(id -u $USER)\\nGROUP_ID=$(id -g $USER) >> .env

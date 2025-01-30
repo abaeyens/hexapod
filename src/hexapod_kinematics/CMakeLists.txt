@@ -25,23 +25,19 @@ set(dependencies
 # build #
 #########
 # library
-add_library(kinematics
+add_library(${PROJECT_NAME}
   src/kinematics.cpp
 )
-target_include_directories(kinematics PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-ament_target_dependencies(kinematics PUBLIC ${dependencies})
+ament_target_dependencies(${PROJECT_NAME} PUBLIC ${dependencies})
 
 # example
-# TODO: do this using the above library instead of adding the sources a second time?
 add_executable(example
   src/example.cpp
-  src/kinematics.cpp
 )
-target_include_directories(example PRIVATE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+target_link_libraries(example ${PROJECT_NAME})
 ament_target_dependencies(example ${dependencies})
 
 ###########
@@ -53,7 +49,7 @@ install(
   DESTINATION include/${PROJECT_NAME}
 )
 install(
-  TARGETS kinematics
+  TARGETS ${PROJECT_NAME}
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -67,5 +63,27 @@ install(TARGETS
   example
   DESTINATION lib/${PROJECT_NAME}
 )
+
+########
+# test #
+########
+if (BUILD_TESTING)
+  # URDF file used in tests
+  install(FILES
+    test/robot_description.urdf
+    DESTINATION share/${PROJECT_NAME}/test
+  )
+
+  # C++ unit tests
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_index_cpp REQUIRED)
+  set(test_dependencies
+    ament_index_cpp
+  )
+  ament_add_gtest(test_kinematics test/test_kinematics.cpp)
+  target_link_libraries(test_kinematics ${PROJECT_NAME})
+  ament_target_dependencies(
+      test_kinematics ${dependencies} ${test_dependencies})
+endif()
 
 ament_package()

@@ -15,15 +15,18 @@ using std::placeholders::_1;
 
 Kinematics::Kinematics(
   const std::vector<std::string>& feet_links,
-  const std::string& base_link)
+  const std::string& base_link,
+  const bool subscribe_to_robot_description)
 : Node("hexapod_kinematics")
 {
   feet_links_ = feet_links;
   base_link_ = base_link;
-  subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "robot_description",
-      rclcpp::QoS(rclcpp::KeepLast(1)).durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL),
-      std::bind(&Kinematics::robotDescriptionCallback, this, _1));
+  if (subscribe_to_robot_description) {
+    subscription_ = this->create_subscription<std_msgs::msg::String>(
+        "robot_description",
+        rclcpp::QoS(rclcpp::KeepLast(1)).durability(RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL),
+        std::bind(&Kinematics::robotDescriptionCallback, this, _1));
+  }
 }
 
 void Kinematics::robotDescriptionCallback(const std_msgs::msg::String& msg)
