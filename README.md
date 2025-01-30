@@ -2,7 +2,7 @@
 
 ## Get up and running
 ```bash
-git clone git@github.com:abaeyens/hexapod-MPC.git
+git clone git@github.com:abaeyens/hexapod.git
 git submodule update --init --recursive
 docker compose build --pull
 docker compose run --rm app bash

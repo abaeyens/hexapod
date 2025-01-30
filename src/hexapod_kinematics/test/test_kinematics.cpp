@@ -61,7 +61,7 @@ TEST(hexapod_kinematics, run_inverse_kinematics) {
     KDL::JntArray q_init(2);
     q_init(0) = -0.1;
     q_init(1) = 0.2;
-    KDL::Frame p_in(KDL::Vector(0.3, 0.0, -0.6));
+    const KDL::Frame p_in(KDL::Vector(0.3, 0.0, -0.6));
     KDL::JntArray q_out(2);
     const int result = kinematics.cartToJnt(0, q_init, p_in, q_out);
     const bool clamped = kinematics.foldAndClampJointAnglesToLimits(0, q_out);
