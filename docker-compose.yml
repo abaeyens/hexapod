@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        - USER=$USER
+        - USER_ID=$USER_ID
+        - GROUP_ID=$GROUP_ID
         - ROS_DISTRO=$ROS_DISTRO
     command: bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash && exec bash"
     working_dir: ${PWD}
@@ -12,7 +15,7 @@ services:
       - /dev:/dev
       - /tmp:/tmp
       - /var/log/journal:/var/log/journal
-      - ${XAUTHORITY}:/home/user/.Xauthority:ro
+      - ${XAUTHORITY:-/home/${USER}/.Xauthority}:/home/${USER}/.Xauthority:ro
     environment:
       # Application
       - DATA_PATH=${PWD}/data
