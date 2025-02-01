@@ -6,7 +6,7 @@
   <description>Library for inverse and other kinematics for hexapod</description>
   <maintainer email="mail@arnebaeyens.com">Arne Baeyens</maintainer>
   <author email="mail@arnebaeyens.com">Arne Baeyens</author>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
